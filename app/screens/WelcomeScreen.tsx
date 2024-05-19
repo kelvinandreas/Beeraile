@@ -29,38 +29,35 @@ const styles = StyleSheet.create({
   },
 });
 
-function WelcomeScreen({navigation}) {
+function WelcomeScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Quit"
+          text="keluar"
           Navigate={() => navigation.navigate('Home')}
           soundName="quit.mp3"
         />
       </View>
 
       <View style={styles.contentView}>
-        <View style={{alignItems: 'center'}}>
-          <Text style={styles.text}>Welcome to</Text>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={styles.text}>Selamat Datang di</Text>
           <Image source={require('../assets/logo_horizontal.png')} />
         </View>
         <Text style={styles.text}>
-          {'your gateway to learning the basics of Braille!\n'}
+          {'tempat anda belajar Braille!\n'}
         </Text>
         <Text style={styles.text}>
-          {'To begin your journey, simply press and hold either the top or bottom ' +
-            'of the screen to Access the controls. The buttons will always be in ' +
-            "the same location for easy navigation. Let's embark on this exciting " +
-            'learning experience together\n'}
+          {'untuk mulai, tekan dan tahan tombol yang ada diatas dan dibawah. lokasi tombol akan selalu berada di tempat yang sama. marilah kita memulai petualangan ini bersama!\n'}
         </Text>
-        <Text style={styles.text}>Top button: Quit</Text>
-        <Text style={styles.text}>Bottom button: Start</Text>
+        <Text style={styles.text}>tombol atas: keluar</Text>
+        <Text style={styles.text}>tombol bawah: mulai</Text>
       </View>
 
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Start"
+          text="mulai"
           Navigate={() => navigation.navigate('Home')}
           soundName="start.mp3"
         />

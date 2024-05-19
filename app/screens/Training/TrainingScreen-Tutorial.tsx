@@ -1,7 +1,7 @@
-/* eslint-disable prettier/prettier */
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
+import BrailleGrid from '../../components/Braille';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    textAlign: 'justify',
   },
   buttonView: {
     flex: 1,
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function TrainingScreen({navigation}: any) {
+function Tutorial({navigation}: any) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonView}>
@@ -42,22 +43,8 @@ function TrainingScreen({navigation}: any) {
       </View>
 
       <View style={styles.contentView}>
-        <Text style={styles.text}>
-          {
-            'Braille adalah metode khusus bagi orang yang memiliki gangguan penglihatan maupun tunanetra untuk membaca dan menulis menggunakan indera peraba. Alih-alih menggunakan huruf seperti A, B, dan C, Braille menggunakan tonjolan-tonjolan kecil yang dapat dirasakan dengan jari. Tonjolan-tonjolan ini diatur dalam pola yang mewakili huruf, angka, dan bahkan kata-kata khusus!\n'
-          }
-        </Text>
-        <Text style={styles.text}>
-          {
-            'Setiap huruf dalam Braille terdiri dari grid 3 kali 2 dengan tonjolan yang memiliki nomor-nomor khusus untuk menunjukkan posisinya.\n'
-          }
-        </Text>
-        <Text style={styles.text}>{'tombol atas: keluar'}</Text>
-        <Text style={styles.text}>{'tombol bawah kiri: balik'}</Text>
-        <Text style={styles.text}>{'tombol bawah kanan: lanjut\n'}</Text>
-        <Text style={styles.text}>
-          {'navigasi tombol akan sama untuk sesi ini.'}
-        </Text>
+        <Text style={styles.text}>{'A dan 1'}</Text>
+        <BrailleGrid ascii={65} numRep={false} />
       </View>
 
       <View style={styles.buttonView}>
@@ -75,4 +62,4 @@ function TrainingScreen({navigation}: any) {
     </View>
   );
 }
-export default TrainingScreen;
+export default Tutorial;

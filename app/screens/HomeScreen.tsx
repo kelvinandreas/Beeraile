@@ -19,8 +19,9 @@ const styles = StyleSheet.create({
   },
   buttonView: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
   },
   contentView: {
@@ -29,13 +30,13 @@ const styles = StyleSheet.create({
   },
 });
 
-function HomeScreen({navigation}) {
+function HomeScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Training"
-          Navigate={() => navigation.navigate('Training')}
+          text="keluar"
+          Navigate={() => navigation.navigate('Welcome')}
           soundName="training.mp3"
         />
       </View>
@@ -43,17 +44,23 @@ function HomeScreen({navigation}) {
       <View style={styles.contentView}>
         <Text style={styles.text}>
           {
-            'Choose your preferred mode. For beginners and first-time app users, starting with training is recommended. Advanced users can opt for the quiz mode.\n'
+            'pilih mode. untuk pemula, mode latihan adalah opsi yang disarankan.\n'
           }
         </Text>
-        <Text style={styles.text}>Top button: training</Text>
-        <Text style={styles.text}>Bottom button: quiz</Text>
+        <Text style={styles.text}>tombol atas: keluar</Text>
+        <Text style={styles.text}>tombol bawah kiri: latihan</Text>
+        <Text style={styles.text}>tombol bawah KANAN: SUARA</Text>
       </View>
 
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Quiz"
-          Navigate={() => navigation.navigate('Quiz')}
+          text="latihan"
+          Navigate={() => navigation.navigate('Training')}
+          soundName="quiz.mp3"
+        />
+        <ButtonCustom
+          text="suara"
+          Navigate={() => navigation.navigate('Training')}
           soundName="quiz.mp3"
         />
       </View>
