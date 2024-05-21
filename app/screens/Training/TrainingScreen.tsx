@@ -37,14 +37,14 @@ function TrainingScreen({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="previous.mp3"
+          soundName="keluar.mp3"
         />
       </View>
 
       <View style={styles.contentView}>
         <Text style={styles.text}>
           {
-            "Braille adalah metode khusus bagi orang yang memiliki gangguan penglihatan maupun tunanetra untuk membaca dan menulis menggunakan indera peraba. Alih-alih menggunakan huruf seperti A, B, dan C, Braille menggunakan tonjolan-tonjolan kecil yang dapat dirasakan dengan jari. Tonjolan-tonjolan ini diatur dalam pola yang mewakili huruf, angka, dan bahkan kata-kata khusus!\n"
+            'Braille adalah metode khusus bagi orang yang memiliki gangguan penglihatan maupun tunanetra untuk membaca dan menulis menggunakan indera peraba. Alih-alih menggunakan huruf seperti A, B, dan C, Braille menggunakan tonjolan-tonjolan kecil yang dapat dirasakan dengan jari. Tonjolan-tonjolan ini diatur dalam pola yang mewakili huruf, angka, dan bahkan kata-kata khusus!\n'
           }
         </Text>
         <Text style={styles.text}>
@@ -64,12 +64,12 @@ function TrainingScreen({navigation}: any) {
         <ButtonCustom
           text="balik"
           Navigate={() => navigation.navigate('Home')}
-          soundName="next.mp3"
+          soundName="balik.mp3"
         />
         <ButtonCustom
           text="lanjut"
           Navigate={() => navigation.navigate('Number Representation')}
-          soundName="next.mp3"
+          soundName="lanjut.mp3"
         />
       </View>
     </View>

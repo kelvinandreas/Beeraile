@@ -1,7 +1,8 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid, {brailleMap} from '../../components/Braille';
+import Sound from 'react-native-sound';
 
 const styles = StyleSheet.create({
   container: {
@@ -10,13 +11,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 24,
     textTransform: 'uppercase',
     marginLeft: 10,
     marginRight: 10,
+    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'justify',
+    textAlign: 'center',
   },
   buttonView: {
     flex: 1,
@@ -31,11 +33,32 @@ const styles = StyleSheet.create({
   },
 });
 
+const handlePress = (step: number) => {
+  const soundName = tutorialList[step].toLowerCase() + '.mp3';
+  console.log('🚀 ~ handlePress ~ soundName:', soundName);
+  const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('Failed to load the sound', error);
+      return;
+    }
+    sound.setVolume(1);
+    sound.play(success => {
+      if (success) {
+        console.log('successfully finished playing');
+        sound.reset();
+        return;
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+    });
+  });
+};
+
 // Ini buat apa aja yg mo di tutorial
 const tutorialList: string[] = [
   'A',
-  'B',
-  'C',
+  // 'B',
+  // 'C',
   // 'D',
   // 'E',
   // 'F',
@@ -68,20 +91,28 @@ const tutorialList: string[] = [
 function Tutorial({navigation}: any) {
   const [step, setStep] = useState(0);
 
+  useEffect(() => {
+    handlePress(step);
+  }, [step]);
+
   return (
     <View style={styles.container}>
       <View style={styles.buttonView}>
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="previous.mp3"
+          soundName="keluar.mp3"
         />
       </View>
 
-      <View style={styles.contentView}>
-        <Text style={styles.text}>{brailleMap[tutorialList[step]].name}</Text>
-        <BrailleGrid char={tutorialList[step]} numRep={false} />
-      </View>
+      <TouchableOpacity
+        style={styles.contentView}
+        onPress={() => handlePress(step)}>
+        <View style={styles.contentView}>
+          <Text style={styles.text}>{brailleMap[tutorialList[step]].name}</Text>
+          <BrailleGrid char={tutorialList[step]} numRep={false} />
+        </View>
+      </TouchableOpacity>
 
       <View style={styles.buttonView}>
         <ButtonCustom
@@ -93,7 +124,7 @@ function Tutorial({navigation}: any) {
               navigation.navigate('Number Representation');
             }
           }}
-          soundName="next.mp3"
+          soundName="balik.mp3"
         />
         <ButtonCustom
           text="lanjut"
@@ -104,7 +135,7 @@ function Tutorial({navigation}: any) {
               navigation.navigate('Tutorial End');
             }
           }}
-          soundName="next.mp3"
+          soundName="lanjut.mp3"
         />
       </View>
     </View>

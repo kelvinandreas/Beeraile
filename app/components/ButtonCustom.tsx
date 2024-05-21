@@ -13,13 +13,14 @@ export function ButtonCustom({text, Navigate, soundName}: ButtonProps) {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handlePress = () => {
-    const sound = new Sound(soundName, Sound.MAIN_BUNDLE, (error) => {
+    const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
+      console.log('🚀 ~ sound ~ soundName:', soundName);
       if (error) {
-      console.log('Failed to load the sound', error);
-      return;
+        console.log('Failed to load the sound', error);
+        return;
       }
       sound.setVolume(1);
-      sound.play((success) => {
+      sound.play(success => {
         if (success) {
           console.log('successfully finished playing');
           sound.reset();

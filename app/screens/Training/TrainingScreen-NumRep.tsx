@@ -10,13 +10,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 24,
     textTransform: 'uppercase',
     marginLeft: 10,
     marginRight: 10,
+    marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'justify',
+    textAlign: 'center',
   },
   buttonView: {
     flex: 1,
@@ -38,7 +39,7 @@ function NumRep({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="previous.mp3"
+          soundName="keluar.mp3"
         />
       </View>
 
@@ -51,12 +52,12 @@ function NumRep({navigation}: any) {
         <ButtonCustom
           text="balik"
           Navigate={() => navigation.navigate('Training')}
-          soundName="next.mp3"
+          soundName="balik.mp3"
         />
         <ButtonCustom
           text="lanjut"
           Navigate={() => navigation.navigate('Tutorial')}
-          soundName="next.mp3"
+          soundName="lanjut.mp3"
         />
       </View>
     </View>
