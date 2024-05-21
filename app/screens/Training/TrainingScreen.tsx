@@ -19,8 +19,9 @@ const styles = StyleSheet.create({
   },
   buttonView: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
   },
   contentView: {
@@ -29,12 +30,12 @@ const styles = StyleSheet.create({
   },
 });
 
-function TrainingScreen({navigation}) {
+function TrainingScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Previous"
+          text="keluar"
           Navigate={() => navigation.navigate('Home')}
           soundName="previous.mp3"
         />
@@ -43,25 +44,31 @@ function TrainingScreen({navigation}) {
       <View style={styles.contentView}>
         <Text style={styles.text}>
           {
-            "Braille is a special way for people who can't see well or at all to read and write using their fingers. Instead of letters like A, B, and C, Braille uses small bumps that you can feel with your fingers. These bumps are arranged in patterns that stand for letters, numbers, and even special words!.\n"
+            "Braille adalah metode khusus bagi orang yang memiliki gangguan penglihatan maupun tunanetra untuk membaca dan menulis menggunakan indera peraba. Alih-alih menggunakan huruf seperti A, B, dan C, Braille menggunakan tonjolan-tonjolan kecil yang dapat dirasakan dengan jari. Tonjolan-tonjolan ini diatur dalam pola yang mewakili huruf, angka, dan bahkan kata-kata khusus!\n"
           }
         </Text>
         <Text style={styles.text}>
           {
-            'each letter is a 3 by 2 grid with bumps that have their own special numbers to show where they are.\n'
+            'Setiap huruf dalam Braille terdiri dari grid 3 kali 2 dengan tonjolan yang memiliki nomor-nomor khusus untuk menunjukkan posisinya.\n'
           }
         </Text>
-        <Text style={styles.text}>{'Top button: previous'}</Text>
-        <Text style={styles.text}>{'Bottom button: next\n'}</Text>
+        <Text style={styles.text}>{'tombol atas: keluar'}</Text>
+        <Text style={styles.text}>{'tombol bawah kiri: balik\n'}</Text>
+        <Text style={styles.text}>{'tombol bawah KANAN: lanjut\n'}</Text>
         <Text style={styles.text}>
-          {'the button will be the same for this session'}
+          {'the navigasi tombol akan sama untuk sesi ini.'}
         </Text>
       </View>
 
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Next"
-          Navigate={() => navigation.navigate('Tutorial1')}
+          text="balik"
+          Navigate={() => navigation.navigate('Home')}
+          soundName="next.mp3"
+        />
+        <ButtonCustom
+          text="lanjut"
+          Navigate={() => navigation.navigate('Number Representation')}
           soundName="next.mp3"
         />
       </View>

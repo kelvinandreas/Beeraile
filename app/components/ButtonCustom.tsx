@@ -22,7 +22,7 @@ export function ButtonCustom({text, Navigate, soundName}: ButtonProps) {
       sound.play((success) => {
         if (success) {
           console.log('successfully finished playing');
-          sound.reset(); 
+          sound.reset();
           return;
         } else {
           console.log('playback failed due to audio decoding errors');
@@ -30,7 +30,7 @@ export function ButtonCustom({text, Navigate, soundName}: ButtonProps) {
       });
     });
 
-    console.log("Vibrate");
+    console.log('Vibrate');
     Vibration.vibrate(100);
   };
 
