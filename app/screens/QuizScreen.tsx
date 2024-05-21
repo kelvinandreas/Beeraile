@@ -34,9 +34,9 @@ function QuizScreen({navigation}: any) {
     <View style={styles.container}>
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Exit"
+          text="Keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="exit.mp3"
+          soundName="keluar.mp3"
         />
       </View>
 
@@ -57,9 +57,9 @@ function QuizScreen({navigation}: any) {
 
       <View style={styles.buttonView}>
         <ButtonCustom
-          text="Next"
+          text="Lanjut"
           Navigate={() => navigation.navigate('Welcome')}
-          soundName="next.mp3"
+          soundName="lanjut.mp3"
         />
       </View>
     </View>
