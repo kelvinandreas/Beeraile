@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function QuizScreen({navigation}) {
+function QuizScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonView}>
