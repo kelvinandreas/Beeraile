@@ -83,7 +83,7 @@ type CircleProps = {
 function Circle({num, isFilled, numRep}: CircleProps) {
   if (numRep) {
     return (
-      <TouchableOpacity onPress={() => handlePress(true, num.toString())}>
+      <TouchableOpacity onPressIn={() => handlePress(true, num.toString())}>
         <View style={styles.filledCircle}>
           <Text style={styles.circleText}>{num}</Text>
         </View>
@@ -93,14 +93,14 @@ function Circle({num, isFilled, numRep}: CircleProps) {
 
   if (isFilled) {
     return (
-      <TouchableOpacity onPress={() => handlePress(true, num.toString())}>
+      <TouchableOpacity onPressIn={() => handlePress(true, num.toString())}>
         <View style={styles.filledCircle} />
       </TouchableOpacity>
     );
   }
 
   return (
-    <TouchableOpacity onPress={() => handlePress(false, num.toString())}>
+    <TouchableOpacity onPressIn={() => handlePress(false, num.toString())}>
       <View style={styles.unfilledCircle} />
     </TouchableOpacity>
   );

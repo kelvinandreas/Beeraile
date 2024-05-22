@@ -33,49 +33,48 @@ const styles = StyleSheet.create({
 
 function TrainingScreen({navigation}: any) {
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <View style={styles.buttonView}>
-          <ButtonCustom
-            text="keluar"
-            Navigate={() => navigation.navigate('Home')}
-            soundName="keluar.mp3"
-          />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.buttonView}>
+        <ButtonCustom
+          text="keluar"
+          Navigate={() => navigation.navigate('Home')}
+          soundName="keluar.mp3"
+        />
+      </View>
 
-        <View style={styles.contentView}>
-          <Text style={styles.text}>
-            {
-              'Braille adalah metode khusus bagi orang yang memiliki gangguan penglihatan maupun tunanetra untuk membaca dan menulis menggunakan indera peraba. Alih-alih menggunakan huruf seperti A, B, dan C, Braille menggunakan tonjolan-tonjolan kecil yang dapat dirasakan dengan jari. Tonjolan-tonjolan ini diatur dalam pola yang mewakili huruf, angka, dan bahkan kata-kata khusus!\n'
-            }
-          </Text>
-          <Text style={styles.text}>
-            {
-              'Setiap huruf dalam Braille terdiri dari grid 3 kali 2 dengan tonjolan yang memiliki nomor-nomor khusus untuk menunjukkan posisinya.\n'
-            }
-          </Text>
-          <Text style={styles.text}>{'tombol atas: keluar'}</Text>
-          <Text style={styles.text}>{'tombol bawah kiri: balik\n'}</Text>
-          <Text style={styles.text}>{'tombol bawah KANAN: lanjut\n'}</Text>
-          <Text style={styles.text}>
-            {'the navigasi tombol akan sama untuk sesi ini.'}
-          </Text>
-        </View>
+      <View style={styles.contentView}>
+        <Text style={styles.text}>
+          {
+            'Braille adalah metode khusus bagi orang yang memiliki gangguan penglihatan maupun tunanetra untuk membaca dan menulis menggunakan indera peraba. Alih-alih menggunakan huruf seperti A, B, dan C, Braille menggunakan tonjolan-tonjolan kecil yang dapat dirasakan dengan jari. Tonjolan-tonjolan ini diatur dalam pola yang mewakili huruf, angka, dan bahkan kata-kata khusus!\n'
+          }
+        </Text>
+        <Text style={styles.text}>
+          {
+            'Setiap huruf dalam Braille terdiri dari grid 3 kali 2 dengan tonjolan yang memiliki nomor-nomor khusus untuk menunjukkan posisinya.\n'
+          }
+        </Text>
+        <Text style={styles.text}>{'tombol atas: keluar'}</Text>
+        <Text style={styles.text}>{'tombol bawah kiri: balik\n'}</Text>
+        <Text style={styles.text}>{'tombol bawah KANAN: lanjut\n'}</Text>
+        <Text style={styles.text}>
+          {'the navigasi tombol akan sama untuk sesi ini.'}
+        </Text>
+      </View>
 
-        <View style={styles.buttonView}>
-          <ButtonCustom
-            text="balik"
-            Navigate={() => navigation.navigate('Home')}
-            soundName="balik.mp3"
-          />
-          <ButtonCustom
-            text="lanjut"
-            Navigate={() => navigation.navigate('Number Representation')}
-            soundName="lanjut.mp3"
-          />
-        </View>
+      <View style={styles.buttonView}>
+        <ButtonCustom
+          text="balik"
+          Navigate={() => navigation.navigate('Home')}
+          soundName="balik.mp3"
+        />
+        <ButtonCustom
+          text="lanjut"
+          Navigate={() => navigation.navigate('Number Representation')}
+          soundName="lanjut.mp3"
+        />
       </View>
     </SafeAreaView>
+
   );
 }
 export default TrainingScreen;

@@ -33,8 +33,7 @@ const styles = StyleSheet.create({
 
 function WelcomeScreen({navigation}: any) {
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.buttonView}>
           <ButtonCustom
             text="keluar"
@@ -65,8 +64,7 @@ function WelcomeScreen({navigation}: any) {
             soundName="mulai.mp3"
           />
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
   );
 }
 
