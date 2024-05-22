@@ -3,11 +3,12 @@ import HomeScreen from './app/screens/HomeScreen';
 import WelcomeScreen from './app/screens/WelcomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import QuizScreen from './app/screens/QuizScreen';
+import SpeechScreen from './app/screens/Speech/SpeechScreen';
 import TrainingScreen from './app/screens/Training/TrainingScreen';
 import NumRep from './app/screens/Training/TrainingScreen-NumRep';
 import Tutorial from './app/screens/Training/TrainingScreen-Tutorial';
 import TutorialEnd from './app/screens/Training/TrainingScreen-End';
+import Transcript from './app/screens/Speech/SpeechScreen-Transcript';
 
 function App(): React.JSX.Element {
   const Stack = createNativeStackNavigator();
@@ -24,7 +25,8 @@ function App(): React.JSX.Element {
         <Stack.Screen name="Number Representation" component={NumRep} />
         <Stack.Screen name="Tutorial" component={Tutorial} />
         <Stack.Screen name="Tutorial End" component={TutorialEnd} />
-        <Stack.Screen name="Quiz" component={QuizScreen} />
+        <Stack.Screen name="Speech" component={SpeechScreen} />
+        <Stack.Screen name="Transcript" component={Transcript} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -58,36 +58,34 @@ function TrainingEnd({navigation}: any) {
   }, []);
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <View style={styles.buttonView}>
-          <ButtonCustom
-            text="keluar"
-            Navigate={() => navigation.navigate('Home')}
-            soundName="keluar.mp3"
-          />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.buttonView}>
+        <ButtonCustom
+          text="keluar"
+          Navigate={() => navigation.navigate('Home')}
+          soundName="keluar.mp3"
+        />
+      </View>
 
-        <TouchableOpacity
-          style={styles.contentView}
-          onPress={() => handlePress('ending.mp3')}>
-          <View style={styles.contentView}>
-            <Text style={styles.text}>
-              {
-                'Selamat! Anda telah mempelajari dasar-dasar Braille! Anda dapat mengulangi pelatihan atau memilih mode lain.\n'
-              }
-            </Text>
-            <Text style={styles.text}>{'tombol atas dan bawah: keluar'}</Text>
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.buttonView}>
-          <ButtonCustom
-            text="keluar"
-            Navigate={() => navigation.navigate('Home')}
-            soundName="keluar.mp3"
-          />
+      <TouchableOpacity
+        style={styles.contentView}
+        onPress={() => handlePress('ending.mp3')}>
+        <View style={styles.contentView}>
+          <Text style={styles.text}>
+            {
+              'Selamat! Anda telah mempelajari dasar-dasar Braille! Anda dapat mengulangi pelatihan atau memilih mode lain.\n'
+            }
+          </Text>
+          <Text style={styles.text}>{'tombol atas dan bawah: keluar'}</Text>
         </View>
+      </TouchableOpacity>
+
+      <View style={styles.buttonView}>
+        <ButtonCustom
+          text="keluar"
+          Navigate={() => navigation.navigate('Home')}
+          soundName="keluar.mp3"
+        />
       </View>
     </SafeAreaView>
   );
