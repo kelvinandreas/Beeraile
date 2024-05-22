@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid, {brailleMap} from '../../components/Braille';
 import Sound from 'react-native-sound';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
   container: {
@@ -96,49 +97,53 @@ function Tutorial({navigation}: any) {
   }, [step]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.buttonView}>
-        <ButtonCustom
-          text="keluar"
-          Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
-        />
-      </View>
-
-      <TouchableOpacity
-        style={styles.contentView}
-        onPress={() => handlePress(step)}>
-        <View style={styles.contentView}>
-          <Text style={styles.text}>{brailleMap[tutorialList[step]].name}</Text>
-          <BrailleGrid char={tutorialList[step]} numRep={false} />
+    <SafeAreaView>
+      <View style={styles.container}>
+        <View style={styles.buttonView}>
+          <ButtonCustom
+            text="keluar"
+            Navigate={() => navigation.navigate('Home')}
+            soundName="keluar.mp3"
+          />
         </View>
-      </TouchableOpacity>
 
-      <View style={styles.buttonView}>
-        <ButtonCustom
-          text="balik"
-          Navigate={() => {
-            if (step > 0) {
-              setStep(prevStep => prevStep - 1);
-            } else {
-              navigation.navigate('Number Representation');
-            }
-          }}
-          soundName="balik.mp3"
-        />
-        <ButtonCustom
-          text="lanjut"
-          Navigate={() => {
-            if (step < tutorialList.length - 1) {
-              setStep(prevStep => prevStep + 1);
-            } else {
-              navigation.navigate('Tutorial End');
-            }
-          }}
-          soundName="lanjut.mp3"
-        />
+        <TouchableOpacity
+          style={styles.contentView}
+          onPress={() => handlePress(step)}>
+          <View style={styles.contentView}>
+            <Text style={styles.text}>
+              {brailleMap[tutorialList[step]].name}
+            </Text>
+            <BrailleGrid char={tutorialList[step]} numRep={false} />
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.buttonView}>
+          <ButtonCustom
+            text="balik"
+            Navigate={() => {
+              if (step > 0) {
+                setStep(prevStep => prevStep - 1);
+              } else {
+                navigation.navigate('Number Representation');
+              }
+            }}
+            soundName="balik.mp3"
+          />
+          <ButtonCustom
+            text="lanjut"
+            Navigate={() => {
+              if (step < tutorialList.length - 1) {
+                setStep(prevStep => prevStep + 1);
+              } else {
+                navigation.navigate('Tutorial End');
+              }
+            }}
+            soundName="lanjut.mp3"
+          />
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 export default Tutorial;
