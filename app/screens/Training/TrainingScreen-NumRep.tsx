@@ -2,6 +2,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid from '../../components/Braille';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,33 +35,35 @@ const styles = StyleSheet.create({
 
 function NumRep({navigation}: any) {
   return (
-    <View style={styles.container}>
-      <View style={styles.buttonView}>
-        <ButtonCustom
-          text="keluar"
-          Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
-        />
-      </View>
+    <SafeAreaView>
+      <View style={styles.container}>
+        <View style={styles.buttonView}>
+          <ButtonCustom
+            text="keluar"
+            Navigate={() => navigation.navigate('Home')}
+            soundName="keluar.mp3"
+          />
+        </View>
 
-      <View style={styles.contentView}>
-        <Text style={styles.text}>{'representasi nomor'}</Text>
-        <BrailleGrid char={' '} numRep={true} />
-      </View>
+        <View style={styles.contentView}>
+          <Text style={styles.text}>{'representasi nomor'}</Text>
+          <BrailleGrid char={' '} numRep={true} />
+        </View>
 
-      <View style={styles.buttonView}>
-        <ButtonCustom
-          text="balik"
-          Navigate={() => navigation.navigate('Training')}
-          soundName="balik.mp3"
-        />
-        <ButtonCustom
-          text="lanjut"
-          Navigate={() => navigation.navigate('Tutorial')}
-          soundName="lanjut.mp3"
-        />
+        <View style={styles.buttonView}>
+          <ButtonCustom
+            text="balik"
+            Navigate={() => navigation.navigate('Training')}
+            soundName="balik.mp3"
+          />
+          <ButtonCustom
+            text="lanjut"
+            Navigate={() => navigation.navigate('Tutorial')}
+            soundName="lanjut.mp3"
+          />
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 export default NumRep;

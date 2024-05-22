@@ -7,29 +7,33 @@ import {
   Vibration,
   View,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Sound from 'react-native-sound';
 
 // tambah suara sama geter buat braillenya logicnya disini yak
 const handlePress = (isFilled: boolean, soundName: string) => {
   if (isFilled) {
-    const sound = new Sound(convertSoundName(soundName) + '.mp3', Sound.MAIN_BUNDLE, error => {
-      if (error) {
-        console.log('Failed to load the sound', error);
-        return;
-      }
-      sound.setVolume(1);
-      sound.play(success => {
-        if (success) {
-          console.log('successfully finished playing');
-          sound.reset();
+    const sound = new Sound(
+      convertSoundName(soundName) + '.mp3',
+      Sound.MAIN_BUNDLE,
+      error => {
+        if (error) {
+          console.log('Failed to load the sound', error);
           return;
-        } else {
-          console.log('playback failed due to audio decoding errors');
         }
-      });
-    });
-  }
-  else{
+        sound.setVolume(1);
+        sound.play(success => {
+          if (success) {
+            console.log('successfully finished playing');
+            sound.reset();
+            return;
+          } else {
+            console.log('playback failed due to audio decoding errors');
+          }
+        });
+      },
+    );
+  } else {
     const sound = new Sound('node_beep.mp3', Sound.MAIN_BUNDLE, error => {
       if (error) {
         console.log('Failed to load the sound', error);
@@ -80,9 +84,9 @@ function Circle({num, isFilled, numRep}: CircleProps) {
   if (numRep) {
     return (
       <TouchableOpacity onPress={() => handlePress(true, num.toString())}>
-      <View style={styles.filledCircle}>
-        <Text style={styles.circleText}>{num}</Text>
-      </View>
+        <View style={styles.filledCircle}>
+          <Text style={styles.circleText}>{num}</Text>
+        </View>
       </TouchableOpacity>
     );
   }
@@ -90,14 +94,14 @@ function Circle({num, isFilled, numRep}: CircleProps) {
   if (isFilled) {
     return (
       <TouchableOpacity onPress={() => handlePress(true, num.toString())}>
-        <View style={styles.filledCircle}/>
+        <View style={styles.filledCircle} />
       </TouchableOpacity>
     );
   }
 
   return (
     <TouchableOpacity onPress={() => handlePress(false, num.toString())}>
-      <View style={styles.unfilledCircle}/>
+      <View style={styles.unfilledCircle} />
     </TouchableOpacity>
   );
 }
@@ -166,17 +170,19 @@ export default function BrailleGrid({char, numRep}: BrailleGridProps) {
   }
 
   return (
-    <View style={styles.gridContainer}>
-      {circles.map(num => (
-        <View key={num} style={styles.circleContainer}>
-          <Circle
-            num={num}
-            isFilled={brailleMap[char].dots.charAt(num - 1) === '1'}
-            numRep={false}
-          />
-        </View>
-      ))}
-    </View>
+    <SafeAreaView>
+      <View style={styles.gridContainer}>
+        {circles.map(num => (
+          <View key={num} style={styles.circleContainer}>
+            <Circle
+              num={num}
+              isFilled={brailleMap[char].dots.charAt(num - 1) === '1'}
+              numRep={false}
+            />
+          </View>
+        ))}
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -184,7 +190,8 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: 'column',
     flexWrap: 'wrap',
-    width: 350,
+    width: 400,
+    height: 500,
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
