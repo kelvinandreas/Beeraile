@@ -1,11 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {
-  StyleSheet,
-  Text,
-  View,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import {StyleSheet, Text, View, ActivityIndicator, Alert} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ButtonCustom} from '../../components/ButtonCustom';
@@ -58,9 +52,9 @@ function SpeechScreen({navigation}) {
   useEffect(() => {
     AudioRecord.init({
       sampleRate: 16000,
-      channels: 1, 
-      bitsPerSample: 16, 
-      wavFile: 'input.wav', 
+      channels: 1,
+      bitsPerSample: 16,
+      wavFile: 'input.wav',
     });
 
     checkPermissions();
@@ -73,7 +67,7 @@ function SpeechScreen({navigation}) {
         PERMISSIONS.ANDROID.RECORD_AUDIO,
       );
       if (audioPermissionRequest !== RESULTS.GRANTED) {
-        console.warn('Audio permission not granted');
+        console.warn('Permission untuk audio tidak diperbolehkan.');
       }
     }
 
@@ -85,7 +79,7 @@ function SpeechScreen({navigation}) {
         PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
       );
       if (writePermissionRequest !== RESULTS.GRANTED) {
-        console.warn('Write permission not granted');
+        console.warn('Permission untuk write tidak diperbolehkan.');
       }
     }
 
@@ -97,7 +91,7 @@ function SpeechScreen({navigation}) {
         PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
       );
       if (readPermissionRequest !== RESULTS.GRANTED) {
-        console.warn('Read permission not granted');
+        console.warn('Permission untuk read tidak diperbolehkan.');
       }
     }
 
@@ -108,21 +102,13 @@ function SpeechScreen({navigation}) {
       const managePermissionRequest = await request(
         PERMISSIONS.ANDROID.MANAGE_EXTERNAL_STORAGE,
       );
-      if (managePermissionRequest !== RESULTS.GRANTED) {
-        console.warn('Manage external storage permission not granted');
-      }
     }
   };
 
   const startRecording = async () => {
     const permission = await request(PERMISSIONS.ANDROID.RECORD_AUDIO);
-    if (permission !== RESULTS.GRANTED) {
-      console.warn('Audio permission not granted');
-      return;
-    }
 
     setRecording(true);
-    console.log('Starting recording...');
     AudioRecord.start();
   };
 
@@ -130,27 +116,20 @@ function SpeechScreen({navigation}) {
     if (!recording) return;
 
     setLoading(true);
-    console.log('Stopping recording...');
     let audioFile = await AudioRecord.stop();
     setRecording(false);
-    console.log('Recorded audio file path:', audioFile);
 
-    // Save the file to the Downloads directory
     const newFilePath = `${RNFS.DownloadDirectoryPath}/input.wav`;
     RNFS.copyFile(audioFile, newFilePath)
       .then(() => {
-        console.log('File copied to:', newFilePath);
+        console.log('File udah dicopy ke: ', newFilePath);
 
-        // Check if the file exists and has content
         RNFS.stat(newFilePath)
           .then(stats => {
             if (stats.size > 0) {
-              console.log('Recorded file size:', stats.size);
-              // Navigate to the Transcript screen after recording
               navigation.navigate('Transcript', {filePath: newFilePath});
             } else {
-              console.error('Recorded file is empty');
-              Alert.alert('Recording Error', 'The recorded file is empty.');
+              Alert.alert('Error Audio Recording', 'File recordingnya kosong');
             }
           })
           .catch(err => {
@@ -158,7 +137,7 @@ function SpeechScreen({navigation}) {
           });
       })
       .catch(error => {
-        console.error('Failed to copy file:', error);
+        console.error('Gagal dapat copy file: ', error);
       });
 
     setLoading(false);
@@ -167,7 +146,7 @@ function SpeechScreen({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonView}>
-      <ButtonCustom
+        <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
           soundName="keluar.mp3"
