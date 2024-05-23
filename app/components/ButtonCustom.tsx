@@ -7,9 +7,11 @@ interface ButtonProps {
   text: string;
   Navigate: () => void;
   soundName: string;
+  onPressIn?: () => void;
+  onPressOut?: () => void;
 }
 
-export function ButtonCustom({text, Navigate, soundName}: ButtonProps) {
+export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}: ButtonProps) {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handlePress = () => {
@@ -75,8 +77,14 @@ export function ButtonCustom({text, Navigate, soundName}: ButtonProps) {
     <TouchableOpacity
       style={styles.buttonContainer}
       onPress={handlePress}
-      onPressIn={handleHold}
-      onPressOut={handleRelease}>
+      onPressIn={() => {
+        handleHold();
+        if (onPressIn) onPressIn();
+      }}
+      onPressOut={() => {
+        handleRelease();
+        if (onPressOut) onPressOut();
+      }}>
       <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
   );
