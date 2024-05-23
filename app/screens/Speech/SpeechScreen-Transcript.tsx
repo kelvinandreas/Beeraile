@@ -13,11 +13,12 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 24,
     textTransform: 'uppercase',
     marginLeft: 10,
     marginRight: 10,
     justifyContent: 'center',
+    textAlign: 'center',
     alignItems: 'center',
   },
   buttonView: {
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function preProccess(str: string): string{
+function preProccess(str: string): string {
   let temp = str;
   temp = temp.toUpperCase();
   temp = temp.replace(/[^A-Z\s]/gm, ''); // buang selain A-Z
@@ -69,7 +70,7 @@ function Transcript({navigation}: any) {
   };
 
   // Kalo diawal
-  if (step === 0){
+  if (step === 0) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.buttonView}>
@@ -86,21 +87,23 @@ function Transcript({navigation}: any) {
           <Text style={styles.text}>{'tombol atas: keluar'}</Text>
           <Text style={styles.text}>{'tombol bawah kiri: balik'}</Text>
           <Text style={styles.text}>{'tombol bawah kanan: lanjut\n'}</Text>
-          <Text style={styles.text}>{'navigasi tombol akan sama untuk sesi ini.'}</Text>
+          <Text style={styles.text}>
+            {'navigasi tombol akan sama untuk sesi ini.'}
+          </Text>
         </View>
 
         <View style={styles.buttonView}>
           <ButtonCustom
             text="balik"
             Navigate={() => {
-                navigation.navigate('Speech');
+              navigation.navigate('Speech');
             }}
             soundName="balik.mp3"
           />
           <ButtonCustom
             text="lanjut"
             Navigate={() => {
-                setStep(prevStep => prevStep + 1);
+              setStep(prevStep => prevStep + 1);
             }}
             soundName="lanjut.mp3"
           />
@@ -156,7 +159,9 @@ function Transcript({navigation}: any) {
           style={styles.contentView}
           onPressIn={() => handlePress()}>
           <View style={styles.contentView}>
-            <Text style={styles.text}>{brailleMap[transcript.charAt(step - 1)].name}</Text>
+            <Text style={styles.text}>
+              {brailleMap[transcript.charAt(step - 1)].name}
+            </Text>
             <BrailleGrid char={transcript.charAt(step - 1)} numRep={false} />
           </View>
         </TouchableOpacity>
