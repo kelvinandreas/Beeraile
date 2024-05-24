@@ -14,27 +14,27 @@ interface ButtonProps {
 export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}: ButtonProps) {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const handlePress = () => {
-    const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-      if (error) {
-        console.log('Failed to load the sound', error);
-        return;
-      }
-      sound.setVolume(1);
-      sound.play(success => {
-        if (success) {
-          console.log('successfully finished playing');
-          sound.reset();
-          return;
-        } else {
-          console.log('playback failed due to audio decoding errors');
-        }
-      });
-    });
+  // const handlePress = () => {
+  //   const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
+  //     if (error) {
+  //       console.log('Failed to load the sound', error);
+  //       return;
+  //     }
+  //     sound.setVolume(1);
+  //     sound.play(success => {
+  //       if (success) {
+  //         console.log('successfully finished playing');
+  //         sound.reset();
+  //         return;
+  //       } else {
+  //         console.log('playback failed due to audio decoding errors');
+  //       }
+  //     });
+  //   });
 
-    console.log('Vibrate');
-    Vibration.vibrate(100);
-  };
+  //   console.log('Vibrate');
+  //   Vibration.vibrate(100);
+  // };
 
   const handleHold = () => {
     setHoldTimeout(
@@ -74,7 +74,7 @@ export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}:
   return (
     <TouchableOpacity
       style={styles.buttonContainer}
-      onPress={handlePress}
+      // onPress={handlePress}
       onPressIn={() => {
         handleHold();
         if (onPressIn) onPressIn();

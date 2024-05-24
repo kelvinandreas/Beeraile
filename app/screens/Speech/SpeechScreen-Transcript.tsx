@@ -216,11 +216,15 @@ function Transcript({route, navigation}: any) {
           />
         </View>
 
-        <View style={styles.contentView}>
-          <Text style={styles.text}>{'transkripsi sudah selesai\n'}</Text>
-          <Text style={styles.text}>{'tombol atas: keluar'}</Text>
-          <Text style={styles.text}>{'tombol bawah: balik'}</Text>
-        </View>
+        <TouchableOpacity
+          style={styles.contentView}
+          onPressIn={() => handlePress('speech_ending')}>
+          <View style={styles.contentView}>
+            <Text style={styles.text}>{'transkripsi sudah selesai\n'}</Text>
+            <Text style={styles.text}>{'tombol atas: keluar'}</Text>
+            <Text style={styles.text}>{'tombol bawah: balik'}</Text>
+          </View>
+        </TouchableOpacity>
 
         <View style={styles.buttonView}>
           <ButtonCustom
