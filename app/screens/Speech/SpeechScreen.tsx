@@ -6,6 +6,7 @@ import {ButtonCustom} from '../../components/ButtonCustom';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import AudioRecord from 'react-native-audio-record';
 import RNFS from 'react-native-fs';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,7 +19,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginLeft: 10,
     marginRight: 10,
-    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonView: {
     flex: 1,
@@ -29,7 +31,6 @@ const styles = StyleSheet.create({
   contentView: {
     flex: 10,
     justifyContent: 'center',
-    alignItems: 'center',
   },
   keluarButton: {
     width: '100%',
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function SpeechScreen({navigation}) {
+function SpeechScreen({navigation}: any) {
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -107,9 +108,10 @@ function SpeechScreen({navigation}) {
 
   const startRecording = async () => {
     const permission = await request(PERMISSIONS.ANDROID.RECORD_AUDIO);
-
-    setRecording(true);
-    AudioRecord.start();
+    if (permission === RESULTS.GRANTED) {
+      setRecording(true);
+      AudioRecord.start();
+    }
   };
 
   const stopRecording = async () => {
@@ -121,26 +123,65 @@ function SpeechScreen({navigation}) {
 
     const newFilePath = `${RNFS.DownloadDirectoryPath}/input.wav`;
     RNFS.copyFile(audioFile, newFilePath)
-      .then(() => {
+      .then(async () => {
         console.log('File udah dicopy ke: ', newFilePath);
-
-        RNFS.stat(newFilePath)
-          .then(stats => {
-            if (stats.size > 0) {
-              navigation.navigate('Transcript', {filePath: newFilePath});
-            } else {
-              Alert.alert('Error Audio Recording', 'File recordingnya kosong');
-            }
-          })
-          .catch(err => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        let fileExists = false;
+        let fileSize = 0;
+        while (!fileExists || fileSize <= 0) {
+          try {
+            const stats = await RNFS.stat(newFilePath);
+            fileExists = true;
+            fileSize = stats.size;
+          } catch (err) {
             console.error('Failed to get file stats:', err);
-          });
+          }
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        handleNavigateToTranscript(newFilePath);
       })
       .catch(error => {
         console.error('Gagal dapat copy file: ', error);
+        setLoading(false);
       });
+  };
 
-    setLoading(false);
+  const handleNavigateToTranscript = async (audioUri: any) => {
+    setLoading(true);
+
+    try {
+      const response = await RNFetchBlob.fetch(
+        'POST',
+        'https://eastus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=id-ID',
+        {
+          'Ocp-Apim-Subscription-Key': '{subscription-key}',
+          'Content-Type': 'audio/wav',
+        },
+        RNFetchBlob.wrap(audioUri),
+      );
+      const responseJson = await response.json();
+      if (response.info().status === 200) {
+        let transcript = responseJson.DisplayText;
+        if (transcript === '') {
+          transcript = 'Suara Tidak Terdeteksi';
+        }
+        navigation.navigate('Transcript', {transcript: transcript});
+
+        await RNFS.unlink(audioUri);
+        console.log('File deleted:', audioUri);
+      } else {
+        throw new Error('Failed to fetch transcript');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to fetch transcript', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Speech'),
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -168,7 +209,7 @@ function SpeechScreen({navigation}) {
         <ButtonCustom
           text="Rekam"
           Navigate={() => {}}
-          soundName="lanjut.mp3"
+          soundName="rekam.mp3"
           onPressIn={startRecording}
           onPressOut={stopRecording}
         />

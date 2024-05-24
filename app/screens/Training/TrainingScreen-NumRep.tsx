@@ -1,8 +1,9 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid from '../../components/Braille';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Sound from 'react-native-sound';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,30 @@ const styles = StyleSheet.create({
   },
 });
 
+const handlePress = (soundName: string) => {
+  const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
+    if (error) {
+      console.log('Failed to load the sound', error);
+      return;
+    }
+    sound.setVolume(1);
+    sound.play(success => {
+      if (success) {
+        console.log('successfully finished playing');
+        sound.reset();
+        return;
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+    });
+  });
+};
+
 function NumRep({navigation}: any) {
+  useEffect(() => {
+    handlePress('representasi_nomor.mp3');
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonView}>
@@ -44,10 +68,14 @@ function NumRep({navigation}: any) {
         />
       </View>
 
-      <View style={styles.contentView}>
-        <Text style={styles.text}>{'representasi nomor'}</Text>
-        <BrailleGrid char={' '} numRep={true} />
-      </View>
+      <TouchableOpacity
+        style={styles.contentView}
+        onPress={() => handlePress('representasi_nomor.mp3')}>
+        <View style={styles.contentView}>
+          <Text style={styles.text}>{'representasi nomor'}</Text>
+          <BrailleGrid char={' '} numRep={true} />
+        </View>
+      </TouchableOpacity>
 
       <View style={styles.buttonView}>
         <ButtonCustom

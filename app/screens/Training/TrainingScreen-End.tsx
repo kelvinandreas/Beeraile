@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
 
 const handlePress = (soundName: string) => {
   const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-    console.log('🚀 ~ sound ~ soundName:', soundName);
     if (error) {
       console.log('Failed to load the sound', error);
       return;

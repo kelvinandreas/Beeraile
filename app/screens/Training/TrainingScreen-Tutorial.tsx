@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
 
 const handlePress = (step: number) => {
   const soundName = tutorialList[step].toLowerCase() + '.mp3';
-  console.log('🚀 ~ handlePress ~ soundName:', soundName);
   const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
     if (error) {
       console.log('Failed to load the sound', error);
@@ -58,10 +57,10 @@ const handlePress = (step: number) => {
 // Ini buat apa aja yg mo di tutorial
 const tutorialList: string[] = [
   'A',
-  // 'B',
-  // 'C',
-  // 'D',
-  // 'E',
+  'B',
+  'C',
+  'D',
+  'E',
   // 'F',
   // 'G',
   // 'H',
@@ -80,9 +79,9 @@ const tutorialList: string[] = [
   // 'U',
   // 'V',
   // 'W',
-  // 'X',
-  // 'Y',
-  // 'Z',
+  'X',
+  'Y',
+  'Z',
   // ' ',
   // '.',
   // ',',

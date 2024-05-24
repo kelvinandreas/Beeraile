@@ -15,26 +15,25 @@ export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}:
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const handlePress = () => {
-    // const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-    //   console.log('🚀 ~ sound ~ soundName:', soundName);
-    //   if (error) {
-    //     console.log('Failed to load the sound', error);
-    //     return;
-    //   }
-    //   sound.setVolume(1);
-    //   sound.play(success => {
-    //     if (success) {
-    //       console.log('successfully finished playing');
-    //       sound.reset();
-    //       return;
-    //     } else {
-    //       console.log('playback failed due to audio decoding errors');
-    //     }
-    //   });
-    // });
+    const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
+      if (error) {
+        console.log('Failed to load the sound', error);
+        return;
+      }
+      sound.setVolume(1);
+      sound.play(success => {
+        if (success) {
+          console.log('successfully finished playing');
+          sound.reset();
+          return;
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    });
 
-    // console.log('Vibrate');
-    // Vibration.vibrate(100);
+    console.log('Vibrate');
+    Vibration.vibrate(100);
   };
 
   const handleHold = () => {
@@ -45,7 +44,6 @@ export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}:
     );
 
     const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-      console.log('🚀 ~ sound ~ soundName:', soundName);
       if (error) {
         console.log('Failed to load the sound', error);
         return;

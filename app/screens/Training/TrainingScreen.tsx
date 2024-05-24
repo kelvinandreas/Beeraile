@@ -57,7 +57,7 @@ function TrainingScreen({navigation}: any) {
         <Text style={styles.text}>{'tombol bawah kiri: balik\n'}</Text>
         <Text style={styles.text}>{'tombol bawah KANAN: lanjut\n'}</Text>
         <Text style={styles.text}>
-          {'the navigasi tombol akan sama untuk sesi ini.'}
+          {'Navigasi tombol akan sama untuk sesi ini.'}
         </Text>
       </View>
 
