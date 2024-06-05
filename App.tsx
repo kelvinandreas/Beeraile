@@ -1,20 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import HomeScreen from './app/screens/HomeScreen';
+import WelcomeScreen from './app/screens/WelcomeScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import SpeechScreen from './app/screens/Speech/SpeechScreen';
+import TrainingScreen from './app/screens/Training/TrainingScreen';
+import NumRep from './app/screens/Training/TrainingScreen-NumRep';
+import Tutorial from './app/screens/Training/TrainingScreen-Tutorial';
+import TutorialEnd from './app/screens/Training/TrainingScreen-End';
+import Transcript from './app/screens/Speech/SpeechScreen-Transcript';
 
-export default function App() {
+function App(): React.JSX.Element {
+  const Stack = createNativeStackNavigator();
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Welcome"
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Training" component={TrainingScreen} />
+        <Stack.Screen name="Number Representation" component={NumRep} />
+        <Stack.Screen name="Tutorial" component={Tutorial} />
+        <Stack.Screen name="Tutorial End" component={TutorialEnd} />
+        <Stack.Screen name="Speech" component={SpeechScreen} />
+        <Stack.Screen name="Transcript" component={Transcript} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
