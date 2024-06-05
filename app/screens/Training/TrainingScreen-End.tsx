@@ -3,6 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import { Audio } from 'expo-av';
+import sounds from '../../data/Sounds';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
@@ -32,28 +33,22 @@ const styles = StyleSheet.create({
   },
 });
 
-const handlePress = (soundName: string) => {
-  // const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-  //   if (error) {
-  //     console.log('Failed to load the sound', error);
-  //     return;
-  //   }
-  //   sound.setVolume(1);
-  //   sound.play(success => {
-  //     if (success) {
-  //       console.log('successfully finished playing');
-  //       sound.reset();
-  //       return;
-  //     } else {
-  //       console.log('playback failed due to audio decoding errors');
-  //     }
-  //   });
-  // });
+type SoundName = keyof typeof sounds;
+
+const handlePress = async (soundName: SoundName) => {
+  try {
+    const sound = new Audio.Sound();
+    await sound.loadAsync(sounds[soundName]);
+    sound.setVolumeAsync(1.0);
+    sound.playAsync();
+  } catch (error) {
+    console.error('Error playing sound:', error);
+  }
 };
 
 function TrainingEnd({navigation}: any) {
   useEffect(() => {
-    handlePress('ending.mp3');
+    handlePress('ending');
   }, []);
 
   return (
@@ -68,7 +63,7 @@ function TrainingEnd({navigation}: any) {
 
       <TouchableOpacity
         style={styles.contentView}
-        onPress={() => handlePress('ending.mp3')}>
+        onPress={() => handlePress('ending')}>
         <View style={styles.contentView}>
           <Text style={styles.text}>
             {

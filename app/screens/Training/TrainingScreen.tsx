@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import {StyleSheet, Text, View, SafeAreaView} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
   container: {

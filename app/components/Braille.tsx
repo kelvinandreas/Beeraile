@@ -8,70 +8,34 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-// import Sound from 'react-native-sound';
+import { Audio } from 'expo-av';
+import sounds from '../data/Sounds';
+
+type SoundName = keyof typeof sounds;
 
 // tambah suara sama geter buat braillenya logicnya disini yak
-const handlePress = (isFilled: boolean, soundName: string) => {
+const handlePress = async (isFilled: boolean, soundName: SoundName) => {
   if (isFilled) {
-    // const sound = new Sound(
-    //   convertSoundName(soundName) + '.mp3',
-    //   Sound.MAIN_BUNDLE,
-    //   error => {
-    //     if (error) {
-    //       console.log('Failed to load the sound', error);
-    //       return;
-    //     }
-    //     sound.setVolume(1);
-    //     sound.play(success => {
-    //       if (success) {
-    //         console.log('successfully finished playing');
-    //         sound.reset();
-    //         return;
-    //       } else {
-    //         console.log('playback failed due to audio decoding errors');
-    //       }
-    //     });
-    //   },
-    // );
+    try {
+      const sound = new Audio.Sound();
+      await sound.loadAsync(sounds[soundName]);
+      sound.setVolumeAsync(1.0);
+      sound.playAsync();
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
   } else {
-    // const sound = new Sound('node_beep.mp3', Sound.MAIN_BUNDLE, error => {
-    //   if (error) {
-    //     console.log('Failed to load the sound', error);
-    //     return;
-    //   }
-    //   sound.setVolume(1);
-    //   sound.play(success => {
-    //     if (success) {
-    //       console.log('successfully finished playing');
-    //       sound.reset();
-    //       return;
-    //     } else {
-    //       console.log('playback failed due to audio decoding errors');
-    //     }
-    //   });
-    // });
+    try {
+      const sound = new Audio.Sound();
+      await sound.loadAsync(sounds['node_beep']);
+      sound.setVolumeAsync(1.0);
+      sound.playAsync();
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
   }
   console.log('Vibrate');
   Vibration.vibrate(100);
-};
-
-const convertSoundName = (soundName: string) => {
-  switch (soundName) {
-    case '1':
-      return 'satu';
-    case '2':
-      return 'dua';
-    case '3':
-      return 'tiga';
-    case '4':
-      return 'empat';
-    case '5':
-      return 'lima';
-    case '6':
-      return 'enam';
-    default:
-      return soundName;
-  }
 };
 
 type CircleProps = {
@@ -83,7 +47,7 @@ type CircleProps = {
 function Circle({num, isFilled, numRep}: CircleProps) {
   if (numRep) {
     return (
-      <TouchableOpacity onPressIn={() => handlePress(true, num.toString())}>
+      <TouchableOpacity onPressIn={() => handlePress(true, num.toString() as SoundName )}>
         <View style={styles.filledCircle}>
           <Text style={styles.circleText}>{num}</Text>
         </View>
@@ -93,14 +57,14 @@ function Circle({num, isFilled, numRep}: CircleProps) {
 
   if (isFilled) {
     return (
-      <TouchableOpacity onPressIn={() => handlePress(true, num.toString())}>
+      <TouchableOpacity onPressIn={() => handlePress(true, num.toString() as SoundName)}>
         <View style={styles.filledCircle} />
       </TouchableOpacity>
     );
   }
 
   return (
-    <TouchableOpacity onPressIn={() => handlePress(false, num.toString())}>
+    <TouchableOpacity onPressIn={() => handlePress(false, num.toString() as SoundName)}>
       <View style={styles.unfilledCircle} />
     </TouchableOpacity>
   );

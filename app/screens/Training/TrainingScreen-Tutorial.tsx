@@ -3,6 +3,8 @@ import React, {useEffect, useState} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid, {brailleMap} from '../../components/Braille';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import { Audio } from 'expo-av';
+import sounds from '../../data/Sounds';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,24 +35,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const handlePress = (step: number) => {
-  const soundName = tutorialList[step].toLowerCase() + '.mp3';
-  // const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-  //   if (error) {
-  //     console.log('Failed to load the sound', error);
-  //     return;
-  //   }
-  //   sound.setVolume(1);
-  //   sound.play(success => {
-  //     if (success) {
-  //       console.log('successfully finished playing');
-  //       sound.reset();
-  //       return;
-  //     } else {
-  //       console.log('playback failed due to audio decoding errors');
-  //     }
-  //   });
-  // });
+type SoundName = keyof typeof sounds;
+
+const handlePress = async (step: number) => {
+  const soundName = tutorialList[step].toLowerCase() as SoundName
+  try {
+    const sound = new Audio.Sound();
+    await sound.loadAsync(sounds[soundName]);
+    sound.setVolumeAsync(1.0);
+    sound.playAsync();
+  } catch (error) {
+    console.error('Error playing sound:', error);
+  }
 };
 
 // Ini buat apa aja yg mo di tutorial

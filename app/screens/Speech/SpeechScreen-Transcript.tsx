@@ -163,7 +163,7 @@ function Transcript({route, navigation}: any) {
               deleteTranscriptAudio();
               navigation.navigate('Home');
             }}
-            soundName="keluar.mp3"
+            soundName="keluar"
           />
         </View>
         <TouchableOpacity
@@ -188,14 +188,14 @@ function Transcript({route, navigation}: any) {
               deleteTranscriptAudio();
               navigation.navigate('Speech');
             }}
-            soundName="balik.mp3"
+            soundName="balik"
           />
           <ButtonCustom
             text="lanjut"
             Navigate={() => {
               setStep(prevStep => prevStep + 1);
             }}
-            soundName="lanjut.mp3"
+            soundName="lanjut"
           />
         </View>
       </SafeAreaView>
@@ -212,7 +212,7 @@ function Transcript({route, navigation}: any) {
               deleteTranscriptAudio();
               navigation.navigate('Home');
             }}
-            soundName="keluar.mp3"
+            soundName="keluar"
           />
         </View>
 
@@ -236,7 +236,7 @@ function Transcript({route, navigation}: any) {
                 navigation.navigate('Speech');
               }
             }}
-            soundName="balik.mp3"
+            soundName="balik"
           />
         </View>
       </SafeAreaView>
@@ -253,7 +253,7 @@ function Transcript({route, navigation}: any) {
               deleteTranscriptAudio();
               navigation.navigate('Home');
             }}
-            soundName="keluar.mp3"
+            soundName="keluar"
           />
         </View>
 
@@ -276,14 +276,14 @@ function Transcript({route, navigation}: any) {
             Navigate={() => {
               setStep(prevStep => prevStep - 1);
             }}
-            soundName="balik.mp3"
+            soundName="balik"
           />
           <ButtonCustom
             text="lanjut"
             Navigate={() => {
               setStep(prevStep => prevStep + 1);
             }}
-            soundName="lanjut.mp3"
+            soundName="lanjut"
           />
         </View>
       </SafeAreaView>

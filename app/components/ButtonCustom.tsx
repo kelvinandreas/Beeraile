@@ -21,8 +21,8 @@ export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}:
     try {
       const sound = new Audio.Sound();
       await sound.loadAsync(sounds[soundName]);
-      await sound.setVolumeAsync(1.0);
-      await sound.playAsync();
+      sound.setVolumeAsync(1.0);
+      sound.playAsync();
       Vibration.vibrate(100);
     } catch (error) {
       console.error('Error playing sound:', error);
