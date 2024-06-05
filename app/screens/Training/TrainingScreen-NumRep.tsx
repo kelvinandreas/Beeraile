@@ -63,7 +63,7 @@ function NumRep({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
+          soundName="keluar"
         />
       </View>
 
@@ -80,12 +80,12 @@ function NumRep({navigation}: any) {
         <ButtonCustom
           text="balik"
           Navigate={() => navigation.navigate('Training')}
-          soundName="balik.mp3"
+          soundName="balik"
         />
         <ButtonCustom
           text="lanjut"
           Navigate={() => navigation.navigate('Tutorial')}
-          soundName="lanjut.mp3"
+          soundName="lanjut"
         />
       </View>
     </SafeAreaView>

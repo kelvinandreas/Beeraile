@@ -1,12 +1,15 @@
 /* eslint-disable prettier/prettier */
 import React, {useState} from 'react';
 import {TouchableOpacity, Text, StyleSheet, Vibration} from 'react-native';
-// import Sound from 'react-native-sound';
+import { Audio } from 'expo-av';
+import sounds from '../data/Sounds';
+
+type SoundName = keyof typeof sounds;
 
 interface ButtonProps {
   text: string;
   Navigate: () => void;
-  soundName: string;
+  soundName: SoundName;
   onPressIn?: () => void;
   onPressOut?: () => void;
 }
@@ -14,27 +17,17 @@ interface ButtonProps {
 export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}: ButtonProps) {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  // const handlePress = () => {
-  //   const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-  //     if (error) {
-  //       console.log('Failed to load the sound', error);
-  //       return;
-  //     }
-  //     sound.setVolume(1);
-  //     sound.play(success => {
-  //       if (success) {
-  //         console.log('successfully finished playing');
-  //         sound.reset();
-  //         return;
-  //       } else {
-  //         console.log('playback failed due to audio decoding errors');
-  //       }
-  //     });
-  //   });
-
-  //   console.log('Vibrate');
-  //   Vibration.vibrate(100);
-  // };
+  const handlePress = async () => {
+    try {
+      const sound = new Audio.Sound();
+      await sound.loadAsync(sounds[soundName]);
+      await sound.setVolumeAsync(1.0);
+      await sound.playAsync();
+      Vibration.vibrate(100);
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  };
 
   const handleHold = () => {
     setHoldTimeout(
@@ -42,23 +35,6 @@ export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}:
         Navigate();
       }, 1000),
     );
-
-    // const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-    //   if (error) {
-    //     console.log('Failed to load the sound', error);
-    //     return;
-    //   }
-    //   sound.setVolume(1);
-    //   sound.play(success => {
-    //     if (success) {
-    //       console.log('successfully finished playing');
-    //       sound.reset();
-    //       return;
-    //     } else {
-    //       console.log('playback failed due to audio decoding errors');
-    //     }
-    //   });
-    // });
 
     console.log('Vibrate');
     Vibration.vibrate(100);
@@ -74,7 +50,7 @@ export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}:
   return (
     <TouchableOpacity
       style={styles.buttonContainer}
-      // onPress={handlePress}
+      onPress={handlePress}
       onPressIn={() => {
         handleHold();
         if (onPressIn) onPressIn();

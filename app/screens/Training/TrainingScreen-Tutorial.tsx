@@ -2,7 +2,6 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid, {brailleMap} from '../../components/Braille';
-// import Sound from 'react-native-sound';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
@@ -101,7 +100,7 @@ function Tutorial({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
+          soundName="keluar"
         />
       </View>
 
@@ -124,7 +123,7 @@ function Tutorial({navigation}: any) {
               navigation.navigate('Number Representation');
             }
           }}
-          soundName="balik.mp3"
+          soundName="balik"
         />
         <ButtonCustom
           text="lanjut"
@@ -135,7 +134,7 @@ function Tutorial({navigation}: any) {
               navigation.navigate('Tutorial End');
             }
           }}
-          soundName="lanjut.mp3"
+          soundName="lanjut"
         />
       </View>
     </SafeAreaView>

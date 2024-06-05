@@ -37,7 +37,7 @@ function HomeScreen({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Welcome')}
-          soundName="keluar.mp3"
+          soundName="keluar"
         />
       </View>
 
@@ -56,12 +56,12 @@ function HomeScreen({navigation}: any) {
         <ButtonCustom
           text="latihan"
           Navigate={() => navigation.navigate('Training')}
-          soundName="latihan.mp3"
+          soundName="latihan"
         />
         <ButtonCustom
           text="Suara"
           Navigate={() => navigation.navigate('Speech')}
-          soundName="suara.mp3"
+          soundName="suara"
         />
       </View>
     </SafeAreaView>

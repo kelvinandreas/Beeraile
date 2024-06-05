@@ -37,7 +37,7 @@ function WelcomeScreen({navigation}: any) {
           <ButtonCustom
             text="keluar"
             Navigate={() => navigation.navigate('Home')}
-            soundName="keluar.mp3"
+            soundName="keluar"
           />
         </View>
 
@@ -60,7 +60,7 @@ function WelcomeScreen({navigation}: any) {
           <ButtonCustom
             text="mulai"
             Navigate={() => navigation.navigate('Home')}
-            soundName="mulai.mp3"
+            soundName="mulai"
           />
         </View>
       </SafeAreaView>

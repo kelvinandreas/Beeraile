@@ -37,7 +37,7 @@ function TrainingScreen({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
+          soundName="keluar"
         />
       </View>
 
@@ -64,12 +64,12 @@ function TrainingScreen({navigation}: any) {
         <ButtonCustom
           text="balik"
           Navigate={() => navigation.navigate('Home')}
-          soundName="balik.mp3"
+          soundName="balik"
         />
         <ButtonCustom
           text="lanjut"
           Navigate={() => navigation.navigate('Number Representation')}
-          soundName="lanjut.mp3"
+          soundName="lanjut"
         />
       </View>
     </SafeAreaView>

@@ -190,7 +190,7 @@ function SpeechScreen({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
+          soundName="keluar"
         />
       </View>
 
@@ -209,7 +209,7 @@ function SpeechScreen({navigation}: any) {
         <ButtonCustom
           text="Rekam"
           Navigate={() => {}}
-          soundName="rekam.mp3"
+          soundName="rekam"
           // onPressIn={startRecording}
           // onPressOut={stopRecording}
         />

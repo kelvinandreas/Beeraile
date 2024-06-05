@@ -2,7 +2,7 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
-// import Sound from 'react-native-sound';
+import { Audio } from 'expo-av';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 const styles = StyleSheet.create({
@@ -62,7 +62,7 @@ function TrainingEnd({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
+          soundName="keluar"
         />
       </View>
 
@@ -83,7 +83,7 @@ function TrainingEnd({navigation}: any) {
         <ButtonCustom
           text="keluar"
           Navigate={() => navigation.navigate('Home')}
-          soundName="keluar.mp3"
+          soundName="keluar"
         />
       </View>
     </SafeAreaView>
