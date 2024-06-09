@@ -4,6 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import { Audio } from 'expo-av';
+import { AndroidAudioEncoder, AndroidOutputFormat, IOSOutputFormat } from 'expo-av/build/Audio';
 
 const styles = StyleSheet.create({
   container: {
@@ -53,6 +54,8 @@ function SpeechScreen({navigation}: any) {
   
   const [recording, setRecording] = React.useState<Audio.Recording | undefined>(undefined);
   const [recordingData, setRecordingData] = React.useState<RecordingData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [transcription, setTranscription] = useState<string>("");
   
   async function startRecording() {
     try {
@@ -62,7 +65,24 @@ function SpeechScreen({navigation}: any) {
           allowsRecordingIOS: true,
           playsInSilentModeIOS: true
         });
-        const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+        const recordingOptions = {
+          android: {
+            ...Audio.RecordingOptionsPresets.HIGH_QUALITY.android,
+            extension: '.wav',
+            outputFormat: AndroidOutputFormat.DEFAULT,
+            audioEncoder: AndroidAudioEncoder.DEFAULT,
+          },
+          ios: {
+            ...Audio.RecordingOptionsPresets.HIGH_QUALITY.ios,
+            extension: '.wav',
+            outputFormat: IOSOutputFormat.LINEARPCM,
+          },
+          web: {
+            mimeType: 'audio/wav',
+            bitsPerSecond: 128000,
+          },
+        };
+        const { recording } = await Audio.Recording.createAsync(recordingOptions);
         if (recordingData?.sound) {
           await recordingData.sound.unloadAsync();
         }
@@ -79,12 +99,12 @@ function SpeechScreen({navigation}: any) {
       await recording.stopAndUnloadAsync();
       const { sound, status } = await recording.createNewLoadedSoundAsync();
       if (status.isLoaded && status.durationMillis !== undefined) {
-        console.log("tset")
         setRecordingData({
           sound: sound,
           duration: getDurationFormatted(status.durationMillis),
           file: recording.getURI()
         });
+        await sendTranscriptionRequest(recording.getURI());
       }
     }
   }
@@ -95,43 +115,43 @@ function SpeechScreen({navigation}: any) {
     return seconds < 10 ? `${minutes}:0${seconds}` : `${minutes}:${seconds}`;
   }
   
-    // const handleNavigateToTranscript = async (audioUri: any) => {
-  //   setLoading(true);
+  async function sendTranscriptionRequest(audioUri: string | null) {
+    if (!audioUri) return;
 
-  //   try {
-  //     const response = await RNFetchBlob.fetch(
-  //       'POST',
-  //       'https://eastus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=id-ID',
-  //       {
-  //         'Ocp-Apim-Subscription-Key': '{subscription-key}',
-  //         'Content-Type': 'audio/wav',
-  //       },
-  //       RNFetchBlob.wrap(audioUri),
-  //     );
-  //     const responseJson = await response.json();
-  //     if (response.info().status === 200) {
-  //       let transcript = responseJson.DisplayText;
-  //       if (transcript === '') {
-  //         transcript = 'Suara Tidak Terdeteksi';
-  //       }
-  //       navigation.navigate('Transcript', {transcript: transcript});
+    setLoading(true);
 
-  //       await RNFS.unlink(audioUri);
-  //       console.log('File deleted:', audioUri);
-  //     } else {
-  //       throw new Error('Failed to fetch transcript');
-  //     }
-  //   } catch (error) {
-  //     Alert.alert('Error', 'Failed to fetch transcript', [
-  //       {
-  //         text: 'OK',
-  //         onPress: () => navigation.navigate('Speech'),
-  //       },
-  //     ]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+    try {
+      const apiUrl = 'https://eastus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=id-ID';
+      const subscriptionKey = '28152ac3dfcb48a7b4222c50f6ce2c80'; // DELETE LATER
+      const headers = {
+        'Ocp-Apim-Subscription-Key': subscriptionKey,
+        'Content-Type': 'audio/wav',
+      };
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: headers,
+        body: {
+          uri: audioUri,
+          type: 'audio/wav',
+          name: 'audio_file.wav',
+        }
+      });
+        
+      if (!response.ok) {
+        throw new Error('Failed to fetch transcription');
+      }
+
+      const data = await response.json();
+      const transcript = data.DisplayText || 'Suara Tidak Terdeteksi';
+      setTranscription(transcript);
+    } catch (error) {
+      console.error('Failed to fetch transcription:', error);
+      Alert.alert('Error', 'Failed to fetch transcription');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
 
@@ -155,16 +175,8 @@ function SpeechScreen({navigation}: any) {
         </Text>
         <Text style={styles.text}>{'tombol atas: keluar'}</Text>
         <Text style={styles.text}>{'tombol bawah: rekam'}</Text>
-
-        {recordingData && recordingData.file && (
-          <View style={styles.contentView}>
-            <Text style={styles.text}>
-              {'Recorded file path:'}
-            </Text>
-            <Text style={styles.text}>
-              {recordingData.file}
-            </Text>
-          </View>
+        {transcription && (
+          <Text style={styles.text}>{transcription}</Text>  
         )}
 
         {/* {loading && <ActivityIndicator size="large" color="#00ff00" />} */}
