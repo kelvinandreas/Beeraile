@@ -5,9 +5,11 @@ import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid, {brailleMap} from '../../components/Braille';
 // import Sound from 'react-native-sound';
 import {SafeAreaView} from 'react-native-safe-area-context';
-// import axios from 'axios';
+import axios from 'axios';
+import { Audio } from 'expo-av';
 // import RNFS from 'react-native-fs';
 import {Buffer} from 'buffer';
+import sounds from '../../data/Sounds';
 
 const styles = StyleSheet.create({
   container: {
@@ -45,6 +47,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+type SoundName = keyof typeof sounds;
+
 function preProccess(str: string): string {
   let temp = str;
   temp = temp.toUpperCase();
@@ -68,65 +73,56 @@ function Transcript({route, navigation}: any) {
         </speak>
       `;
 
-      // try {
-      //   const response = await axios.post(
-      //     'https://eastus.tts.speech.microsoft.com/cognitiveservices/v1',
-      //     xmlBody,
-      //     {
-      //       headers: {
-      //         'Ocp-Apim-Subscription-Key': '{subscription-key}',
-      //         'Content-Type': 'application/ssml+xml',
-      //         'X-Microsoft-OutputFormat': 'audio-24khz-160kbitrate-mono-mp3',
-      //       },
-      //       responseType: 'arraybuffer',
-      //     },
-      //   );
+      try {
+        const response = await axios.post(
+          'https://eastus.tts.speech.microsoft.com/cognitiveservices/v1',
+          xmlBody,
+          {
+            headers: {
+              'Ocp-Apim-Subscription-Key': '{subscription-key}',
+              'Content-Type': 'application/ssml+xml',
+              'X-Microsoft-OutputFormat': 'audio-24khz-160kbitrate-mono-mp3',
+            },
+            responseType: 'arraybuffer',
+          },
+        );
 
-      //   if (response.status === 200) {
+        if (response.status === 200) {
       //     const audioPath = `${RNFS.DownloadDirectoryPath}/output.mp3`;
       //     const buffer = Buffer.from(response.data, 'binary').toString(
       //       'base64',
       //     );
       //     await RNFS.writeFile(audioPath, buffer, 'base64');
 
-      //     const sound = new Sound(audioPath, '', error => {
-      //       if (error) {
-      //         console.log('Failed to load the sound', error);
-      //         return;
-      //       }
-      //       sound.play(() => {
-      //         sound.release();
-      //       });
-      //     });
-      //   } else {
-      //     throw new Error('Failed to fetch transcript');
-      //   }
-      // } catch (error) {
-      //   console.error('Error fetching audio:', error);
-      // }
+          // const sound = new Sound(audioPath, '', error => {
+          //   if (error) {
+          //     console.log('Failed to load the sound', error);
+          //     return;
+          //   }
+          //   sound.play(() => {
+          //     sound.release();
+          //   });
+          // });
+        } else {
+          throw new Error('Failed to fetch transcript');
+        }
+      } catch (error) {
+        console.error('Error fetching audio:', error);
+      }
     };
 
     fetchAudio();
   }, [transcript]);
 
-  const handlePress = (param: string) => {
-    // const soundName = param.toLowerCase() + '.mp3';
-    // const sound = new Sound(soundName, Sound.MAIN_BUNDLE, error => {
-    //   if (error) {
-    //     console.log('Failed to load the sound', error);
-    //     return;
-    //   }
-    //   sound.setVolume(1);
-    //   sound.play(success => {
-    //     if (success) {
-    //       console.log('successfully finished playing');
-    //       sound.reset();
-    //       return;
-    //     } else {
-    //       console.log('playback failed due to audio decoding errors');
-    //     }
-    //   });
-    // });
+  const handlePress = async (soundName: SoundName) => {
+    try {
+      const sound = new Audio.Sound();
+      await sound.loadAsync(sounds[soundName]);
+      sound.setVolumeAsync(1.0);
+      sound.playAsync();
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
   };
 
   const playAudioTranscriptAudio = async () => {
@@ -243,7 +239,7 @@ function Transcript({route, navigation}: any) {
     );
   } else {
     // Kalo di tengah (braille transkripsi)
-    handlePress(brailleMap[transcript.charAt(step - 1)].name);
+    handlePress(brailleMap[transcript.charAt(step - 1)].name as SoundName);
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.buttonView}>
@@ -260,7 +256,7 @@ function Transcript({route, navigation}: any) {
         <TouchableOpacity
           style={styles.contentView}
           onPressIn={() =>
-            handlePress(brailleMap[transcript.charAt(step - 1)].name)
+            handlePress(brailleMap[transcript.charAt(step - 1)].name as SoundName)
           }>
           <View style={styles.contentView}>
             <Text style={styles.title}>

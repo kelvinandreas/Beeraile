@@ -3,10 +3,7 @@ import {StyleSheet, Text, View, ActivityIndicator, Alert} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ButtonCustom} from '../../components/ButtonCustom';
-// import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-// import AudioRecord from 'react-native-audio-record';
-// import RNFS from 'react-native-fs';
-// import RNFetchBlob from 'rn-fetch-blob';
+import { Audio } from 'expo-av';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,107 +43,59 @@ const styles = StyleSheet.create({
   },
 });
 
+type RecordingData = {
+  sound: Audio.Sound;
+  duration: string;
+  file: string | null;
+};
+
 function SpeechScreen({navigation}: any) {
-  const [recording, setRecording] = useState(false);
-  const [loading, setLoading] = useState(false);
+  
+  const [recording, setRecording] = React.useState<Audio.Recording | undefined>(undefined);
+  const [recordingData, setRecordingData] = React.useState<RecordingData | null>(null);
+  
+  async function startRecording() {
+    try {
+      const perm = await Audio.requestPermissionsAsync();
+      if (perm.status === "granted") {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true
+        });
+        const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+        if (recordingData?.sound) {
+          await recordingData.sound.unloadAsync();
+        }
+        setRecording(recording);
+      }
+    } catch (err) {
+      console.error('Failed to start recording:', err);
+    }
+  }
 
-  // useEffect(() => {
-  //   AudioRecord.init({
-  //     sampleRate: 16000,
-  //     channels: 1,
-  //     bitsPerSample: 16,
-  //     wavFile: 'input.wav',
-  //   });
+  async function stopRecording() {
+    if (recording) {
+      setRecording(undefined);
+      await recording.stopAndUnloadAsync();
+      const { sound, status } = await recording.createNewLoadedSoundAsync();
+      if (status.isLoaded && status.durationMillis !== undefined) {
+        console.log("tset")
+        setRecordingData({
+          sound: sound,
+          duration: getDurationFormatted(status.durationMillis),
+          file: recording.getURI()
+        });
+      }
+    }
+  }
 
-  //   checkPermissions();
-  // }, []);
-
-  // const checkPermissions = async () => {
-  //   const audioPermission = await check(PERMISSIONS.ANDROID.RECORD_AUDIO);
-  //   if (audioPermission !== RESULTS.GRANTED) {
-  //     const audioPermissionRequest = await request(
-  //       PERMISSIONS.ANDROID.RECORD_AUDIO,
-  //     );
-  //     if (audioPermissionRequest !== RESULTS.GRANTED) {
-  //       console.warn('Permission untuk audio tidak diperbolehkan.');
-  //     }
-  //   }
-
-  //   const writePermission = await check(
-  //     PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-  //   );
-  //   if (writePermission !== RESULTS.GRANTED) {
-  //     const writePermissionRequest = await request(
-  //       PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
-  //     );
-  //     if (writePermissionRequest !== RESULTS.GRANTED) {
-  //       console.warn('Permission untuk write tidak diperbolehkan.');
-  //     }
-  //   }
-
-  //   const readPermission = await check(
-  //     PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-  //   );
-  //   if (readPermission !== RESULTS.GRANTED) {
-  //     const readPermissionRequest = await request(
-  //       PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
-  //     );
-  //     if (readPermissionRequest !== RESULTS.GRANTED) {
-  //       console.warn('Permission untuk read tidak diperbolehkan.');
-  //     }
-  //   }
-
-  //   const managePermission = await check(
-  //     PERMISSIONS.ANDROID.MANAGE_EXTERNAL_STORAGE,
-  //   );
-  //   if (managePermission !== RESULTS.GRANTED) {
-  //     const managePermissionRequest = await request(
-  //       PERMISSIONS.ANDROID.MANAGE_EXTERNAL_STORAGE,
-  //     );
-  //   }
-  // };
-
-  // const startRecording = async () => {
-  //   const permission = await request(PERMISSIONS.ANDROID.RECORD_AUDIO);
-  //   if (permission === RESULTS.GRANTED) {
-  //     setRecording(true);
-  //     AudioRecord.start();
-  //   }
-  // };
-
-  // const stopRecording = async () => {
-  //   if (!recording) return;
-
-  //   setLoading(true);
-  //   let audioFile = await AudioRecord.stop();
-  //   setRecording(false);
-
-  //   const newFilePath = `${RNFS.DownloadDirectoryPath}/input.wav`;
-  //   RNFS.copyFile(audioFile, newFilePath)
-  //     .then(async () => {
-  //       console.log('File udah dicopy ke: ', newFilePath);
-  //       await new Promise(resolve => setTimeout(resolve, 500));
-  //       let fileExists = false;
-  //       let fileSize = 0;
-  //       while (!fileExists || fileSize <= 0) {
-  //         try {
-  //           const stats = await RNFS.stat(newFilePath);
-  //           fileExists = true;
-  //           fileSize = stats.size;
-  //         } catch (err) {
-  //           console.error('Failed to get file stats:', err);
-  //         }
-  //         await new Promise(resolve => setTimeout(resolve, 500));
-  //       }
-  //       handleNavigateToTranscript(newFilePath);
-  //     })
-  //     .catch(error => {
-  //       console.error('Gagal dapat copy file: ', error);
-  //       setLoading(false);
-  //     });
-  // };
-
-  // const handleNavigateToTranscript = async (audioUri: any) => {
+  function getDurationFormatted(milliseconds: number) {
+    const minutes = Math.floor(milliseconds / 1000 / 60);
+    const seconds = Math.round((milliseconds / 1000) % 60);
+    return seconds < 10 ? `${minutes}:0${seconds}` : `${minutes}:${seconds}`;
+  }
+  
+    // const handleNavigateToTranscript = async (audioUri: any) => {
   //   setLoading(true);
 
   //   try {
@@ -184,6 +133,10 @@ function SpeechScreen({navigation}: any) {
   //   }
   // };
 
+  useEffect(() => {
+
+  }, []); 
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonView}>
@@ -202,16 +155,28 @@ function SpeechScreen({navigation}: any) {
         </Text>
         <Text style={styles.text}>{'tombol atas: keluar'}</Text>
         <Text style={styles.text}>{'tombol bawah: rekam'}</Text>
-        {loading && <ActivityIndicator size="large" color="#00ff00" />}
+
+        {recordingData && recordingData.file && (
+          <View style={styles.contentView}>
+            <Text style={styles.text}>
+              {'Recorded file path:'}
+            </Text>
+            <Text style={styles.text}>
+              {recordingData.file}
+            </Text>
+          </View>
+        )}
+
+        {/* {loading && <ActivityIndicator size="large" color="#00ff00" />} */}
       </View>
 
       <View style={styles.buttonView}>
         <ButtonCustom
           text="Rekam"
           Navigate={() => {}}
-          soundName="rekam"
-          // onPressIn={startRecording}
-          // onPressOut={stopRecording}
+          soundName="a"
+          onPressIn={startRecording}
+          onPressOut={stopRecording}
         />
       </View>
     </SafeAreaView>
