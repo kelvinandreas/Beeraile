@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {TouchableOpacity, Text, StyleSheet, Vibration} from 'react-native';
 import { Audio } from 'expo-av';
 import sounds from '../data/Sounds';
+import { useIsFocused } from '@react-navigation/native';
 
 type SoundName = keyof typeof sounds;
 
@@ -16,8 +17,10 @@ interface ButtonProps {
 
 export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}: ButtonProps) {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
+  const isFocused = useIsFocused();
 
   const handlePress = async () => {
+    if (!isFocused) return;
     try {
       const sound = new Audio.Sound();
       await sound.loadAsync(sounds[soundName]);
