@@ -1,46 +1,59 @@
 /* eslint-disable prettier/prettier */
-import {StyleSheet, Text, View, ActivityIndicator, Alert} from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {ButtonCustom} from '../../components/ButtonCustom';
-import { Audio } from 'expo-av';
-import { AndroidAudioEncoder, AndroidOutputFormat, IOSOutputFormat } from 'expo-av/build/Audio';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  Alert,
+  Platform,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ButtonCustom } from "../../components/ButtonCustom";
+import { Audio } from "expo-av";
+import {
+  AndroidAudioEncoder,
+  AndroidOutputFormat,
+  IOSOutputFormat,
+} from "expo-av/build/Audio";
+import axios from "axios";
+import * as FileSystem from "expo-file-system";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E1E',
+    backgroundColor: "#1E1E1E",
   },
   text: {
-    color: 'white',
+    color: "white",
     fontSize: 14,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     marginLeft: 10,
     marginRight: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonView: {
     flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   contentView: {
     flex: 10,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   keluarButton: {
-    width: '100%',
-    backgroundColor: 'white',
+    width: "100%",
+    backgroundColor: "white",
     padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   keluarButtonText: {
-    color: 'black',
+    color: "black",
     fontSize: 16,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
 });
 
@@ -50,46 +63,50 @@ type RecordingData = {
   file: string | null;
 };
 
-function SpeechScreen({navigation}: any) {
-  
-  const [recording, setRecording] = React.useState<Audio.Recording | undefined>(undefined);
-  const [recordingData, setRecordingData] = React.useState<RecordingData | null>(null);
+function SpeechScreen({ navigation }: any) {
+  const [recording, setRecording] = React.useState<Audio.Recording | undefined>(
+    undefined
+  );
+  const [recordingData, setRecordingData] =
+    React.useState<RecordingData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [transcription, setTranscription] = useState<string>("");
-  
+
   async function startRecording() {
     try {
       const perm = await Audio.requestPermissionsAsync();
       if (perm.status === "granted") {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
-          playsInSilentModeIOS: true
+          playsInSilentModeIOS: true,
         });
         const recordingOptions = {
           android: {
             ...Audio.RecordingOptionsPresets.HIGH_QUALITY.android,
-            extension: '.wav',
-            outputFormat: AndroidOutputFormat.DEFAULT,
-            audioEncoder: AndroidAudioEncoder.DEFAULT,
+            extension: ".m4a",
+            outputFormat: AndroidOutputFormat.MPEG_4,
+            audioEncoder: AndroidAudioEncoder.AAC,
           },
           ios: {
             ...Audio.RecordingOptionsPresets.HIGH_QUALITY.ios,
-            extension: '.wav',
+            extension: ".wav",
             outputFormat: IOSOutputFormat.LINEARPCM,
           },
           web: {
-            mimeType: 'audio/wav',
+            mimeType: "audio/wav",
             bitsPerSecond: 128000,
           },
         };
-        const { recording } = await Audio.Recording.createAsync(recordingOptions);
+        const { recording } = await Audio.Recording.createAsync(
+          recordingOptions
+        );
         if (recordingData?.sound) {
           await recordingData.sound.unloadAsync();
         }
         setRecording(recording);
       }
     } catch (err) {
-      console.error('Failed to start recording:', err);
+      console.error("Failed to start recording:", err);
     }
   }
 
@@ -102,7 +119,7 @@ function SpeechScreen({navigation}: any) {
         setRecordingData({
           sound: sound,
           duration: getDurationFormatted(status.durationMillis),
-          file: recording.getURI()
+          file: recording.getURI(),
         });
         await sendTranscriptionRequest(recording.getURI());
       }
@@ -114,55 +131,115 @@ function SpeechScreen({navigation}: any) {
     const seconds = Math.round((milliseconds / 1000) % 60);
     return seconds < 10 ? `${minutes}:0${seconds}` : `${minutes}:${seconds}`;
   }
-  
+
   async function sendTranscriptionRequest(audioUri: string | null) {
     if (!audioUri) return;
 
     setLoading(true);
 
+    const apiUrl =
+      "https://eastus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=id-ID";
+    const subscriptionKey = "28152ac3dfcb48a7b4222c50f6ce2c80"; // DELETE LATER
+    const headers = {
+      "Ocp-Apim-Subscription-Key": subscriptionKey,
+      "Content-Type": "audio/wav",
+    };
+
     try {
-      const apiUrl = 'https://eastus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=id-ID';
-      const subscriptionKey = '28152ac3dfcb48a7b4222c50f6ce2c80'; // DELETE LATER
-      const headers = {
-        'Ocp-Apim-Subscription-Key': subscriptionKey,
-        'Content-Type': 'audio/wav',
-      };
+      const fileExtension = audioUri.split(".").pop();
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: headers,
-        body: {
+      if (fileExtension === "m4a") {
+        // Convert m4a to wav via Flask server
+        const formData = new FormData();
+        formData.append("audio", {
           uri: audioUri,
-          type: 'audio/wav',
-          name: 'audio_file.wav',
-        }
-      });
-        
-      if (!response.ok) {
-        throw new Error('Failed to fetch transcription');
-      }
+          type: "audio/m4a",
+          name: "audio_file.m4a",
+        });
 
-      const data = await response.json();
-      const transcript = data.DisplayText || 'Suara Tidak Terdeteksi';
-      setTranscription(transcript);
+        const conversionResponse = await fetch(
+          "https://4ce5-34-106-70-215.ngrok-free.app/convert",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!conversionResponse.ok) {
+          throw new Error("Failed to convert audio file");
+        }
+
+        const wavBlob = await conversionResponse.blob();
+        const wavFileUri = FileSystem.documentDirectory + "converted_audio.wav";
+
+        // Save the converted wav blob as a file
+        const fileReaderInstance = new FileReader();
+        fileReaderInstance.readAsDataURL(wavBlob);
+        fileReaderInstance.onload = async () => {
+          const base64data = fileReaderInstance.result as string | null;
+          if (base64data) {
+            const base64String = base64data.split(",")[1];
+            await FileSystem.writeAsStringAsync(wavFileUri, base64String, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+
+            audioUri = wavFileUri;
+
+            await sendToTranscriptionAPI(audioUri);
+          } else {
+            throw new Error("Failed to read the converted audio file");
+          }
+        };
+      } else {
+        await sendToTranscriptionAPI(audioUri);
+      }
     } catch (error) {
-      console.error('Failed to fetch transcription:', error);
-      Alert.alert('Error', 'Failed to fetch transcription');
+      console.error("Failed to fetch transcription:", error);
+      Alert.alert("Error", "Failed to fetch transcription");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => {
+  async function sendToTranscriptionAPI(audioUri: string) {
+    try {
+      const apiUrl =
+        "https://eastus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=id-ID";
+      const subscriptionKey = "28152ac3dfcb48a7b4222c50f6ce2c80"; // DELETE LATER
+      const headers = {
+        "Ocp-Apim-Subscription-Key": subscriptionKey,
+        "Content-Type": "audio/wav",
+      };
 
-  }, []); 
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: headers,
+        body: {
+          uri: audioUri,
+          type: "audio/wav",
+          name: "audio_file.wav",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch transcription");
+      }
+
+      const data = await response.json();
+      const transcript = data.DisplayText || "Suara Tidak Terdeteksi";
+      setTranscription(transcript);
+    } catch (error) {
+      console.error("Failed to send to transcription API:", error);
+      Alert.alert("Error", "Failed to send to transcription API");
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.buttonView}>
         <ButtonCustom
           text="keluar"
-          Navigate={() => navigation.navigate('Home')}
+          Navigate={() => navigation.navigate("Home")}
           soundName="keluar"
         />
       </View>
@@ -170,14 +247,18 @@ function SpeechScreen({navigation}: any) {
       <View style={styles.contentView}>
         <Text style={styles.text}>
           {
-            'selamat datang di mode suara. tekan dan tahan tombol bawah untuk mulai merekam.\n'
+            "selamat datang di mode suara. tekan dan tahan tombol bawah untuk mulai merekam.\n"
           }
         </Text>
-        <Text style={styles.text}>{'tombol atas: keluar'}</Text>
-        <Text style={styles.text}>{'tombol bawah: rekam'}</Text>
-        {transcription && (
-          <Text style={styles.text}>{transcription}</Text>  
+        <Text style={styles.text}>{"tombol atas: keluar"}</Text>
+        <Text style={styles.text}>{"tombol bawah: rekam"}</Text>
+        {recordingData && recordingData.file && (
+          <View style={styles.contentView}>
+            <Text style={styles.text}>{"Recorded file path:"}</Text>
+            <Text style={styles.text}>{recordingData.file}</Text>
+          </View>
         )}
+        {transcription && <Text style={styles.text}>{transcription}</Text>}
 
         {/* {loading && <ActivityIndicator size="large" color="#00ff00" />} */}
       </View>
