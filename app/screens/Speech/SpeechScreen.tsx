@@ -16,7 +16,6 @@ import {
   AndroidOutputFormat,
   IOSOutputFormat,
 } from "expo-av/build/Audio";
-import axios from "axios";
 import * as FileSystem from "expo-file-system";
 
 const styles = StyleSheet.create({
@@ -149,7 +148,6 @@ function SpeechScreen({ navigation }: any) {
       const fileExtension = audioUri.split(".").pop();
 
       if (fileExtension === "m4a") {
-        // Convert m4a to wav via Flask server
         const formData = new FormData();
         formData.append("audio", {
           uri: audioUri,
@@ -172,7 +170,6 @@ function SpeechScreen({ navigation }: any) {
         const wavBlob = await conversionResponse.blob();
         const wavFileUri = FileSystem.documentDirectory + "converted_audio.wav";
 
-        // Save the converted wav blob as a file
         const fileReaderInstance = new FileReader();
         fileReaderInstance.readAsDataURL(wavBlob);
         fileReaderInstance.onload = async () => {
@@ -228,6 +225,8 @@ function SpeechScreen({ navigation }: any) {
       const data = await response.json();
       const transcript = data.DisplayText || "Suara Tidak Terdeteksi";
       setTranscription(transcript);
+      navigation.navigate('Transcript', {transcript: transcript});
+
     } catch (error) {
       console.error("Failed to send to transcription API:", error);
       Alert.alert("Error", "Failed to send to transcription API");
@@ -252,15 +251,6 @@ function SpeechScreen({ navigation }: any) {
         </Text>
         <Text style={styles.text}>{"tombol atas: keluar"}</Text>
         <Text style={styles.text}>{"tombol bawah: rekam"}</Text>
-        {recordingData && recordingData.file && (
-          <View style={styles.contentView}>
-            <Text style={styles.text}>{"Recorded file path:"}</Text>
-            <Text style={styles.text}>{recordingData.file}</Text>
-          </View>
-        )}
-        {transcription && <Text style={styles.text}>{transcription}</Text>}
-
-        {/* {loading && <ActivityIndicator size="large" color="#00ff00" />} */}
       </View>
 
       <View style={styles.buttonView}>

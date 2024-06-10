@@ -3,13 +3,11 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {ButtonCustom} from '../../components/ButtonCustom';
 import BrailleGrid, {brailleMap} from '../../components/Braille';
-// import Sound from 'react-native-sound';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import axios from 'axios';
 import { Audio } from 'expo-av';
-// import RNFS from 'react-native-fs';
-import {Buffer} from 'buffer';
 import sounds from '../../data/Sounds';
+import * as FileSystem from 'expo-file-system';
 
 const styles = StyleSheet.create({
   container: {
@@ -58,9 +56,20 @@ function preProccess(str: string): string {
   return temp;
 }
 
+const arrayBufferToBase64 = (buffer: Buffer) => {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+};
+
 function Transcript({route, navigation}: any) {
   const {transcript: initialTranscript} = route.params;
   const [step, setStep] = useState(0);
+  const [audioReady, setAudioReady] = useState(false);
   const transcript = preProccess(initialTranscript);
 
   useEffect(() => {
@@ -79,7 +88,7 @@ function Transcript({route, navigation}: any) {
           xmlBody,
           {
             headers: {
-              'Ocp-Apim-Subscription-Key': '{subscription-key}',
+              'Ocp-Apim-Subscription-Key': '28152ac3dfcb48a7b4222c50f6ce2c80',
               'Content-Type': 'application/ssml+xml',
               'X-Microsoft-OutputFormat': 'audio-24khz-160kbitrate-mono-mp3',
             },
@@ -88,21 +97,12 @@ function Transcript({route, navigation}: any) {
         );
 
         if (response.status === 200) {
-      //     const audioPath = `${RNFS.DownloadDirectoryPath}/output.mp3`;
-      //     const buffer = Buffer.from(response.data, 'binary').toString(
-      //       'base64',
-      //     );
-      //     await RNFS.writeFile(audioPath, buffer, 'base64');
-
-          // const sound = new Sound(audioPath, '', error => {
-          //   if (error) {
-          //     console.log('Failed to load the sound', error);
-          //     return;
-          //   }
-          //   sound.play(() => {
-          //     sound.release();
-          //   });
-          // });
+          const audioPath = `${FileSystem.documentDirectory}output.mp3`;
+          const base64Audio = arrayBufferToBase64(response.data);
+          await FileSystem.writeAsStringAsync(audioPath, base64Audio, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+          setAudioReady(true);
         } else {
           throw new Error('Failed to fetch transcript');
         }
@@ -125,31 +125,44 @@ function Transcript({route, navigation}: any) {
     }
   };
 
-  const playAudioTranscriptAudio = async () => {
-    // const audioPath = `${RNFS.DownloadDirectoryPath}/output.mp3`;
-    // const sound = new Sound(audioPath, '', error => {
-    //   if (error) {
-    //     console.log('Failed to load the sound', error);
-    //     return;
-    //   }
-    //   sound.play(() => {
-    //     sound.release();
-    //   });
-    // });
+  const playAudioTranscriptAudio = async (initial = false) => {
+    const audioPath = `${FileSystem.documentDirectory}output.mp3`;
+    try {
+      const fileInfo = await FileSystem.getInfoAsync(audioPath);
+      if (!fileInfo.exists) {
+        console.error('Audio file does not exist');
+        return;
+      }
+
+      if (initial) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      
+      const { sound } = await Audio.Sound.createAsync({ uri: audioPath });
+      await sound.playAsync();
+    } catch (error) {
+      console.error('Failed to load the sound', error);
+    }
   };
   const deleteTranscriptAudio = async () => {
-    // const audioPath = `${RNFS.DownloadDirectoryPath}/output.mp3`;
-    // try {
-    //   await RNFS.unlink(audioPath);
-    //   console.log('File deleted:', audioPath);
-    // } catch (error) {
-    //   console.error('Failed to delete the file:', error);
-    // }
+    const audioPath = `${FileSystem.documentDirectory}output.mp3`;
+    try {
+      await FileSystem.deleteAsync(audioPath);
+      console.log('File deleted:', audioPath);
+      setAudioReady(false);
+    } catch (error) {
+      console.error('Failed to delete the file:', error);
+    }
   };
+
+  useEffect(() => {
+    if (step === 0 && audioReady) {
+      playAudioTranscriptAudio(true);
+    }
+  }, [audioReady]);
 
   // Kalo diawal
   if (step === 0) {
-    playAudioTranscriptAudio();
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.buttonView}>
