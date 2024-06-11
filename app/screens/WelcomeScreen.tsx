@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import {ButtonCustom} from '../components/ButtonCustom';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, {useEffect} from "react";
+import { ButtonCustom } from "../components/ButtonCustom";
+import sounds from "../data/Sounds";
+import { Audio } from "expo-av";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const styles = StyleSheet.create({
   container: {
@@ -31,7 +33,23 @@ const styles = StyleSheet.create({
   },
 });
 
-function WelcomeScreen({navigation}: any) {
+type SoundName = keyof typeof sounds;
+
+const handlePress = async (soundName: SoundName) => {
+  try {
+    const sound = new Audio.Sound();
+    await sound.loadAsync(sounds[soundName]);
+    sound.setVolumeAsync(1.0);
+    sound.playAsync();
+  } catch (error) {
+    console.error("Error playing sound:", error);
+  }
+};
+
+function WelcomeScreen({ navigation }: any) {
+  useEffect(() => {
+    handlePress('selamatdatang');
+  }, []);
   return (
       <SafeAreaView style={styles.container}>
         <View style={styles.buttonView}>
@@ -42,6 +60,10 @@ function WelcomeScreen({navigation}: any) {
           />
         </View>
 
+      <TouchableOpacity
+        style={styles.contentView}
+        onPress={() => handlePress("selamatdatang")}
+      >
         <View style={styles.contentView}>
           <View style={{alignItems: 'center'}}>
             <Text style={styles.text}>Selamat datang di</Text>
@@ -56,6 +78,7 @@ function WelcomeScreen({navigation}: any) {
           <Text style={styles.text}>tombol atas: keluar</Text>
           <Text style={styles.text}>tombol bawah: mulai</Text>
         </View>
+      </TouchableOpacity>
 
         <View style={styles.buttonView}>
           <ButtonCustom

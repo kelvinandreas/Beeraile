@@ -6,8 +6,9 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  TouchableOpacity
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,  } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ButtonCustom } from "../../components/ButtonCustom";
 import { Audio } from "expo-av";
@@ -17,6 +18,7 @@ import {
   IOSOutputFormat,
 } from "expo-av/build/Audio";
 import * as FileSystem from "expo-file-system";
+import sounds from "../../data/Sounds";
 
 const styles = StyleSheet.create({
   container: {
@@ -62,7 +64,24 @@ type RecordingData = {
   file: string | null;
 };
 
+type SoundName = keyof typeof sounds;
+
+const handlePress = async (soundName: SoundName) => {
+  try {
+    const sound = new Audio.Sound();
+    await sound.loadAsync(sounds[soundName]);
+    sound.setVolumeAsync(1.0);
+    sound.playAsync();
+  } catch (error) {
+    console.error("Error playing sound:", error);
+  }
+};
+
 function SpeechScreen({ navigation }: any) {
+  useEffect(() => {
+    handlePress("modesuaratekan");
+  }, []);
+
   const [recording, setRecording] = React.useState<Audio.Recording | undefined>(
     undefined
   );
@@ -243,21 +262,25 @@ function SpeechScreen({ navigation }: any) {
         />
       </View>
 
-      <View style={styles.contentView}>
-        <Text style={styles.text}>
-          {
-            "selamat datang di mode suara. tekan dan tahan tombol bawah untuk mulai merekam.\n"
-          }
-        </Text>
-        <Text style={styles.text}>{"tombol atas: keluar"}</Text>
-        <Text style={styles.text}>{"tombol bawah: rekam"}</Text>
-      </View>
-
+      <TouchableOpacity
+        style={styles.contentView}
+        onPress={() => handlePress("modesuaratekan")}
+      >
+        <View style={styles.contentView}>
+          <Text style={styles.text}>
+            {
+              "selamat datang di mode suara. tekan dan tahan tombol bawah untuk mulai merekam.\n"
+            }
+          </Text>
+          <Text style={styles.text}>{"tombol atas: keluar"}</Text>
+          <Text style={styles.text}>{"tombol bawah: rekam"}</Text>
+        </View>
+      </TouchableOpacity>
       <View style={styles.buttonView}>
         <ButtonCustom
           text="Rekam"
           Navigate={() => {}}
-          soundName="a"
+          soundName="rekam"
           onPressIn={startRecording}
           onPressOut={stopRecording}
         />
