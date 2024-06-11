@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 30,
     textTransform: 'uppercase',
     marginLeft: 10,
     marginRight: 10,
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
   contentView: {
     flex: 10,
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -38,8 +38,6 @@ export function ButtonCustom({text, Navigate, soundName, onPressIn, onPressOut}:
         Navigate();
       }, 1000),
     );
-
-    console.log('Vibrate');
     Vibration.vibrate(100);
   };
 

@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   contentView: {
     flex: 10,
     justifyContent: 'center',
+    alignItems: "center",
   },
 });
 

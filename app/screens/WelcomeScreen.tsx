@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity, BackHandler } from "react-native";
 import React, {useEffect} from "react";
 import { ButtonCustom } from "../components/ButtonCustom";
 import sounds from "../data/Sounds";
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
   contentView: {
     flex: 10,
     justifyContent: 'center',
+    alignItems: "center",
   },
 });
 
@@ -51,14 +52,14 @@ function WelcomeScreen({ navigation }: any) {
     handlePress('selamatdatang');
   }, []);
   return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.buttonView}>
-          <ButtonCustom
-            text="keluar"
-            Navigate={() => navigation.navigate('Home')}
-            soundName="keluar"
-          />
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.buttonView}>
+        <ButtonCustom
+          text="keluar"
+          Navigate={() => BackHandler.exitApp()}
+          soundName="keluar"
+        />
+      </View>
 
       <TouchableOpacity
         style={styles.contentView}
@@ -80,14 +81,14 @@ function WelcomeScreen({ navigation }: any) {
         </View>
       </TouchableOpacity>
 
-        <View style={styles.buttonView}>
-          <ButtonCustom
-            text="mulai"
-            Navigate={() => navigation.navigate('Home')}
-            soundName="mulai"
-          />
-        </View>
-      </SafeAreaView>
+      <View style={styles.buttonView}>
+        <ButtonCustom
+          text="mulai"
+          Navigate={() => navigation.navigate('Home')}
+          soundName="mulai"
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 

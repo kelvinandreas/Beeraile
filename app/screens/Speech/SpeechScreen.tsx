@@ -6,9 +6,9 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect,  } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ButtonCustom } from "../../components/ButtonCustom";
 import { Audio } from "expo-av";
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   contentView: {
     flex: 10,
     justifyContent: "center",
+    alignItems: "center",
   },
   keluarButton: {
     width: "100%",
@@ -55,6 +56,12 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 16,
     textTransform: "uppercase",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
@@ -89,6 +96,13 @@ function SpeechScreen({ navigation }: any) {
     React.useState<RecordingData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [transcription, setTranscription] = useState<string>("");
+  const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (!loading && transcription !== "") {
+      navigation.navigate("Transcript", { transcript: transcription });
+    }
+  }, [loading, transcription, navigation]);
 
   async function startRecording() {
     try {
@@ -130,6 +144,7 @@ function SpeechScreen({ navigation }: any) {
 
   async function stopRecording() {
     if (recording) {
+      setLoading(true);
       setRecording(undefined);
       await recording.stopAndUnloadAsync();
       const { sound, status } = await recording.createNewLoadedSoundAsync();
@@ -139,6 +154,7 @@ function SpeechScreen({ navigation }: any) {
           duration: getDurationFormatted(status.durationMillis),
           file: recording.getURI(),
         });
+        await handlePress("sedangmemuat"); // Play "sedangmemuat" sound
         await sendTranscriptionRequest(recording.getURI());
       }
     }
@@ -175,7 +191,7 @@ function SpeechScreen({ navigation }: any) {
         });
 
         const conversionResponse = await fetch(
-          "https://4ce5-34-106-70-215.ngrok-free.app/convert",
+          "https://c4b8-35-194-67-157.ngrok-free.app/convert",
           {
             method: "POST",
             body: formData,
@@ -244,12 +260,29 @@ function SpeechScreen({ navigation }: any) {
       const data = await response.json();
       const transcript = data.DisplayText || "Suara Tidak Terdeteksi";
       setTranscription(transcript);
-      navigation.navigate('Transcript', {transcript: transcript});
-
+      navigation.navigate("Transcript", { transcript: transcript });
     } catch (error) {
       console.error("Failed to send to transcription API:", error);
       Alert.alert("Error", "Failed to send to transcription API");
+    } finally {
+      setLoading(false);
     }
+  }
+
+  function handlePressIn() {
+    handlePress("rekam");
+    const timeout = setTimeout(() => {
+      startRecording();
+    }, 1000);
+    setHoldTimeout(timeout);
+  }
+
+  function handlePressOut() {
+    if (holdTimeout) {
+      clearTimeout(holdTimeout);
+      setHoldTimeout(null);
+    }
+    stopRecording();
   }
 
   return (
@@ -257,7 +290,12 @@ function SpeechScreen({ navigation }: any) {
       <View style={styles.buttonView}>
         <ButtonCustom
           text="keluar"
-          Navigate={() => navigation.navigate("Home")}
+          Navigate={() => {
+            const timeout = setTimeout(() => {
+              navigation.navigate("Home");
+            }, 1000); // 1 second delay before navigating home
+            setHoldTimeout(timeout);
+          }}
           soundName="keluar"
         />
       </View>
@@ -280,11 +318,16 @@ function SpeechScreen({ navigation }: any) {
         <ButtonCustom
           text="Rekam"
           Navigate={() => {}}
-          soundName="rekam"
-          onPressIn={startRecording}
-          onPressOut={stopRecording}
+          soundName="empty"
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
         />
       </View>
+      {loading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#fff" />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
