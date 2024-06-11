@@ -13,7 +13,7 @@ const Sounds = {
     'selamatdatang': require('../assets/audio/selamatdatang.mp3'),
     'pilihmode': require('../assets/audio/pilihmode.mp3'),
     'modelatihantekan': require('../assets/audio/modelatihantekan.mp3'),
-    'modesuaratekan': require('../assets/audio/suara.mp3'),
+    'modesuaratekan': require('../assets/audio/modesuaratekan.mp3'),
     'a': require('../assets/audio/a-z/a.mp3'),
     'b': require('../assets/audio/a-z/b.mp3'),
     'c': require('../assets/audio/a-z/c.mp3'),
